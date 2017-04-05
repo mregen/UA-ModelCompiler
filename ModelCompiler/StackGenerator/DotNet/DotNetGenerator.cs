@@ -583,6 +583,14 @@ namespace Opc.Ua.CodeGenerator
 
             AddTemplate(
                 template,
+                "void AsyncCall()",
+                null,
+                new ServiceType[] { serviceType },
+                new LoadTemplateEventHandler(LoadTemplate_AsyncParameters),
+                null);
+
+            AddTemplate(
+                template,
                 "void BeginAsyncCall()",
                 null,
                 new ServiceType[] { serviceType } ,
@@ -647,6 +655,51 @@ namespace Opc.Ua.CodeGenerator
             }
 
             template.Write("{0} {1}(", GetReturnType(serviceType), serviceType.Name);
+
+            WriteParameters(template, context, types, names, length);
+
+            // write closing semicolon for interface.
+            if (context.Token.IndexOf("Interface") != -1)
+            {
+                template.Write(";");
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Writes an asynchronous method declaration.
+        /// </summary>
+        private string LoadTemplate_AsyncParameters(Template template, Context context)
+        {
+            ServiceType serviceType = context.Target as ServiceType;
+
+            if (serviceType == null)
+            {
+                return null;
+            }
+
+            int length = 0;
+
+            List<string> types = new List<string>();
+            List<string> names = new List<string>();
+
+            CollectParameters(serviceType.Request, false, types, names, ref length);
+
+            types.Add("System.Threading.CancellationToken");
+            names.Add("cancellationToken");
+
+            // write method declaration.
+            template.WriteLine(String.Empty);
+            template.Write(context.Prefix);
+
+            // write method type if not writing an interface declaration.
+            if (context.Token.IndexOf("Interface") == -1)
+            {
+                template.Write("public virtual ");
+            }
+
+            template.Write("System.Threading.Tasks.Task<{0}Response> {1}Async(", serviceType.Name, serviceType.Name);
 
             WriteParameters(template, context, types, names, length);
 

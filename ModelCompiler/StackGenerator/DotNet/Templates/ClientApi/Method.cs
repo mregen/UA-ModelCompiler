@@ -52,6 +52,57 @@ void SyncCall()
     return response.ResponseHeader;
 }
 
+#if (OPCUA_ASYNC_TASK)
+/// <summary>
+/// Invokes the _NAME_ service using async Task based request.
+/// </summary>
+public void AsyncCall()
+{
+    _NAME_Request request = new _NAME_Request();
+    _NAME_Response response = null;
+
+    // RequestParameters
+
+    UpdateRequestHeader(request, requestHeader == null, "_NAME_");
+
+    try
+    {
+        if (UseTransportChannel)
+        {
+            IServiceResponse genericResponse = await TransportChannel.SendRequestAsync(request, cancellationToken);
+
+            if (genericResponse == null)
+            {
+                throw new ServiceResultException(StatusCodes.BadUnknownResponse);
+            }
+
+            ValidateResponse(genericResponse.ResponseHeader);
+            response = (_NAME_Response)genericResponse;
+        }
+        else
+        {
+            _NAME_ResponseMessage responseMessage = await System.Threading.Tasks.Task.Factory.FromAsync(
+                InnerChannel.Begin_NAME_, InnerChannel.End_NAME_, new _NAME_Message(request), 
+                null, System.Threading.Tasks.TaskCreationOptions.None);
+
+            if (responseMessage == null || responseMessage._NAME_Response == null)
+            {
+                throw new ServiceResultException(StatusCodes.BadUnknownResponse);
+            }
+
+            response = responseMessage._NAME_Response;
+            ValidateResponse(response.ResponseHeader);
+        }
+    }
+    finally
+    {
+        RequestCompleted(request, response, "_NAME_");
+    }
+
+    return response;
+}
+#endif
+
 /// <summary>
 /// Begins an asynchronous invocation of the _NAME_ service.
 /// </summary>
