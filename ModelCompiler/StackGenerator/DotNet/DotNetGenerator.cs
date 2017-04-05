@@ -686,7 +686,12 @@ namespace Opc.Ua.CodeGenerator
 
             CollectParameters(serviceType.Request, false, types, names, ref length);
 
-            types.Add("System.Threading.CancellationToken");
+            string tokenType = "System.Threading.CancellationToken";
+            if (tokenType.Length > length)
+            {
+                length = tokenType.Length;
+            }
+            types.Add(tokenType);
             names.Add("cancellationToken");
 
             // write method declaration.
@@ -696,7 +701,7 @@ namespace Opc.Ua.CodeGenerator
             // write method type if not writing an interface declaration.
             if (context.Token.IndexOf("Interface") == -1)
             {
-                template.Write("public virtual ");
+                template.Write("public virtual async ");
             }
 
             template.Write("System.Threading.Tasks.Task<{0}Response> {1}Async(", serviceType.Name, serviceType.Name);

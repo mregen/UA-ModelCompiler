@@ -52,11 +52,11 @@ void SyncCall()
     return response.ResponseHeader;
 }
 
-#if (OPCUA_ASYNC_TASK)
+#if (OPCUA_ASYNC_TASK || NET_STANDARD)
 /// <summary>
 /// Invokes the _NAME_ service using async Task based request.
 /// </summary>
-public void AsyncCall()
+void AsyncCall()
 {
     _NAME_Request request = new _NAME_Request();
     _NAME_Response response = null;
