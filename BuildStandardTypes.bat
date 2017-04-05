@@ -15,15 +15,18 @@ REM Set the following values to automatically copy the generated source code to 
 REM
 REM for example:
 REM 	set ANSIC_TARGET=..\..\uastack\Source\Ansi C Stack\
-REM 	set DOTNET_TARGET=..\..\uastack\Source\Common\Core\
-REM 	set DI_TARGET=..\..\uastack\Source\Common\Core\Stack\Generated\
-REM 	set ADI_TARGET=..\..\uastack\Source\Common\Core\Stack\Generated\
+REM 	set DOTNET_TARGET=..\UA-.NET\Stack\Opc.Ua.Core\
+REM 	set GDS_TARGET=..\UA-.NET\Stack\Opc.Ua.Core\
+REM 	set DI_TARGET=..\UA-.NET\Stack\Opc.Ua.Core\
+REM 	set ADI_TARGET=..\UA-.NET\Stack\Opc.Ua.Core\
 REM
 REM Leaving these fields empty will skip the operation
 
 set ANSIC_TARGET=
-set DOTNET_TARGET=
+set DOTNET_TARGET="..\UA-.NETStandardLibrary2\Stack\Opc.Ua.Core\"
 set GDS_TARGET=
+set DI_TARGET=
+set ADI_TARGET=
 
 REM Make sure that all of our output locations exist..
 
@@ -89,35 +92,26 @@ IF "%ANSIC_TARGET%" NEQ "" (
 REM STEP 2b) Copy code to .NET
 IF "%DOTNET_TARGET%" NEQ "" (
 	ECHO Copying .NET code to %DOTNET_TARGET%
-	@ECHO OFF
+	ECHO ON
 	COPY "%OUTPUT%\Schema\AttributeIds.csv" "%DOTNET_TARGET%\Schema\AttributeIds.csv"
 	COPY "%OUTPUT%\Schema\NodeIds.csv" "%DOTNET_TARGET%\Schema\NodeIds.csv"
 	COPY "%OUTPUT%\Schema\Opc.Ua.NodeSet.xml" "%DOTNET_TARGET%\Schema\Opc.Ua.NodeSet.xml"
 	COPY "%OUTPUT%\Schema\Opc.Ua.NodeSet2.xml" "%DOTNET_TARGET%\Schema\Opc.Ua.NodeSet2.xml"
 	COPY "%OUTPUT%\Schema\Opc.Ua.Types.bsd" "%DOTNET_TARGET%\Schema\Opc.Ua.Types.bsd"
 	COPY "%OUTPUT%\Schema\Opc.Ua.Types.xsd" "%DOTNET_TARGET%\Schema\Opc.Ua.Types.xsd"
-	COPY "%OUTPUT%\DotNet\Opc.Ua.Endpoints.wsdl" "%DOTNET_TARGET%\Schema\Opc.Ua.Endpoints.wsdl"
-	COPY "%OUTPUT%\DotNet\Opc.Ua.Services.wsdl" "%DOTNET_TARGET%\Schema\Opc.Ua.Services.wsdl"
-	COPY "%OUTPUT%\DotNet\Opc.Ua.Channels.cs" "%DOTNET_TARGET%\Stack\Generated\Opc.Ua.Channels.cs"
-	COPY "%OUTPUT%\DotNet\Opc.Ua.Client.cs" "%DOTNET_TARGET%\Stack\Generated\Opc.Ua.Client.cs"
-	COPY "%OUTPUT%\DotNet\Opc.Ua.Endpoints.cs" "%DOTNET_TARGET%\Stack\Generated\Opc.Ua.Endpoints.cs"
-	COPY "%OUTPUT%\DotNet\Opc.Ua.Interfaces.cs" "%DOTNET_TARGET%\Stack\Generated\Opc.Ua.Interfaces.cs"
-	COPY "%OUTPUT%\DotNet\Opc.Ua.Messages.cs" "%DOTNET_TARGET%\Stack\Generated\Opc.Ua.Messages.cs"
-	COPY "%OUTPUT%\DotNet\Opc.Ua.ServerBase.cs" "%DOTNET_TARGET%\Stack\Generated\Opc.Ua.ServerBase.cs"
-	COPY "%OUTPUT%\DotNet\Opc.Ua.StatusCodes.cs" "%DOTNET_TARGET%\Types\Generated\Opc.Ua.StatusCodes.cs"
-	COPY "%OUTPUT%\DotNet\Opc.Ua.Attributes.cs" "%DOTNET_TARGET%\Types\Generated\Opc.Ua.Attributes.cs"
-	COPY "%OUTPUT%\Schema\Opc.Ua.Classes.cs" "%DOTNET_TARGET%\Stack\Generated\Opc.Ua.Classes.cs"
-	COPY "%OUTPUT%\Schema\Opc.Ua.Constants.cs" "%DOTNET_TARGET%\Stack\Generated\Opc.Ua.Constants.cs"
-	COPY "%OUTPUT%\Schema\Opc.Ua.DataTypes.cs" "%DOTNET_TARGET%\Stack\Generated\Opc.Ua.DataTypes.cs"
 	COPY "%OUTPUT%\Schema\Opc.Ua.PredefinedNodes.uanodes" "%DOTNET_TARGET%\Stack\Generated\Opc.Ua.PredefinedNodes.uanodes"
 	COPY "%OUTPUT%\Schema\Opc.Ua.PredefinedNodes.xml" "%DOTNET_TARGET%\Stack\Generated\Opc.Ua.PredefinedNodes.xml"
-	ECHO ON
+	COPY "%OUTPUT%\Schema\*.cs" "%DOTNET_TARGET%\Stack\Generated\*.cs"
+	COPY "%OUTPUT%\DotNet\Opc.Ua.Endpoints.wsdl" "%DOTNET_TARGET%\Schema\Opc.Ua.Endpoints.wsdl"
+	COPY "%OUTPUT%\DotNet\Opc.Ua.Services.wsdl" "%DOTNET_TARGET%\Schema\Opc.Ua.Services.wsdl"
+	COPY "%OUTPUT%\DotNet\*.cs" "%DOTNET_TARGET%\Stack\Generated\*.cs"
+	@ECHO OFF
 )
 
 REM STEP 2b) Copy code to GDS 
 IF "%GDS_TARGET%" NEQ "" (
 	ECHO Copying GDS code to %GDS_TARGET%
-	@ECHO OFF
+	ECHO ON
 	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.Types.bsd" "%GDS_TARGET%\Stack\Core\Schema\Opc.Ua.Gds.Types.bsd"
 	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.Types.xsd" "%GDS_TARGET%\Stack\Core\Schema\Opc.Ua.Gds.Types.xsd"
 	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.NodeSet2.xml" "%GDS_TARGET%\Stack\Core\Schema\Opc.Ua.Gds.NodeSet2.xml"
@@ -126,20 +120,26 @@ IF "%GDS_TARGET%" NEQ "" (
 	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.Classes.cs" "%GDS_TARGET%\GDS\Server\Model\Opc.Ua.Gds.Classes.cs"
 	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.PredefinedNodes.uanodes" "%GDS_TARGET%\GDS\Server\Model\Opc.Ua.Gds.PredefinedNodes.uanodes"
 	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.PredefinedNodes.xml" "%GDS_TARGET%\GDS\Server\Model\Opc.Ua.Gds.PredefinedNodes.xml"
-	ECHO ON
+	@ECHO OFF
 )
 
 REM STEP 2c) Copy remaining collaboration outputs to their respective locations...
 IF "%DI_TARGET%" NEQ "" (
+	ECHO ON
 	COPY "%OUTPUT%\DI\*.*" "%DI_TARGET%"
+	@ECHO OFF
 )
 
 IF "%ADI_TARGET%" NEQ "" (
+	ECHO ON
 	COPY "%OUTPUT%\ADI\*.*" "%ADI_TARGET%"
+	@ECHO OFF
 )
 
 IF "%PLCOPEN_TARGET%" NEQ "" (
-	COPY "%OUTPUT%\ADI\*.*" "%PLCOPEN_TARGET%"
+	ECHO ON
+	COPY "%OUTPUT%\PLCOPEN\*.*" "%PLCOPEN_TARGET%"
+	@ECHO OFF
 )
 
 GOTO theEnd
