@@ -69,7 +69,7 @@ void AsyncCall()
     {
         if (UseTransportChannel)
         {
-            IServiceResponse genericResponse = await TransportChannel.SendRequestAsync(request, cancellationToken);
+            IServiceResponse genericResponse = await TransportChannel.SendRequestAsync(request, cancellationToken).ConfigureAwait(false);
 
             if (genericResponse == null)
             {
@@ -83,7 +83,7 @@ void AsyncCall()
         {
             _NAME_ResponseMessage responseMessage = await System.Threading.Tasks.Task.Factory.FromAsync(
                 InnerChannel.Begin_NAME_, InnerChannel.End_NAME_, new _NAME_Message(request), 
-                null, System.Threading.Tasks.TaskCreationOptions.None);
+                null, System.Threading.Tasks.TaskCreationOptions.None).ConfigureAwait(false);
 
             if (responseMessage == null || responseMessage._NAME_Response == null)
             {

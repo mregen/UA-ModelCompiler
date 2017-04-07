@@ -2,7 +2,6 @@ class Placeholder
 {
 // ***START***
 #if (!OPCUA_EXCLUDE__NAME_)
-#if (!OPCUA_ASYNC_TASK)
 /// <summary>
 /// The operation contract for the _NAME_ service.
 /// </summary>
@@ -15,7 +14,7 @@ IAsyncResult Begin_NAME_(_NAME_Message request, AsyncCallback callback, object a
 /// </summary>
 _NAME_ResponseMessage End_NAME_(IAsyncResult result);
 
-#else
+#if (OPCUA_ASYNC_TASK || NET_STANDARD)
 /// <summary>
 /// The operation contract for the _NAME_ service.
 /// </summary>

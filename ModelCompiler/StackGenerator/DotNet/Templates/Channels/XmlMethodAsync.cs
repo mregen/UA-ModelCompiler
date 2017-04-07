@@ -34,7 +34,7 @@ public async System.Threading.Tasks.Task<_NAME_ResponseMessage> _NAME_Async(_NAM
 {
     try
     {
-        return await this.Channel._NAME_Async(request);
+        return await this.Channel._NAME_Async(request).ConfigureAwait(false);
     }
     catch (FaultException<ServiceFault> e)
     {

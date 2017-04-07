@@ -201,7 +201,15 @@ namespace Opc.Ua.CodeGenerator
                 "InvokeService();",
                 null,
                 new ServiceType[] { serviceType } ,
-                new LoadTemplateEventHandler(LoadTemplate_InvokeServiceParameters),
+                new LoadTemplateEventHandler(LoadTemplate_InvokeServiceSyncParameters),
+                null);
+
+            AddTemplate(
+                template,
+                "InvokeServiceAsync();",
+                null,
+                new ServiceType[] { serviceType },
+                new LoadTemplateEventHandler(LoadTemplate_InvokeServiceAsyncParameters),
                 null);
 
             AddTemplate(
@@ -218,7 +226,7 @@ namespace Opc.Ua.CodeGenerator
         /// <summary>
         /// Writes a synchronous method declaration.
         /// </summary>
-        private string LoadTemplate_InvokeServiceParameters(Template template, Context context)
+        private string LoadTemplate_InvokeServiceSyncParameters(Template template, Context context)
         {
             ServiceType serviceType = context.Target as ServiceType;
 
@@ -277,6 +285,39 @@ namespace Opc.Ua.CodeGenerator
         }
 
         /// <summary>
+        /// Writes a asynchronous method declaration.
+        /// </summary>
+        private string LoadTemplate_InvokeServiceAsyncParameters(Template template, Context context)
+        {
+            ServiceType serviceType = context.Target as ServiceType;
+
+            if (serviceType == null)
+            {
+                return null;
+            }
+
+            // write method declaration.
+            template.WriteLine(String.Empty);
+            template.Write(context.Prefix);
+            template.WriteLine("response = await ServerInstanceAsync.{1}Async(", serviceType.Response[0].Name, serviceType.Name);
+
+            if (serviceType.Request != null || serviceType.Request.Length > 0)
+            {
+                foreach (FieldType field in serviceType.Request)
+                {
+                    template.Write(context.Prefix);
+                    template.WriteLine("   request.{0},", field.Name);
+                }
+            }
+
+            template.Write(context.Prefix);
+            template.Write("   System.Threading.CancellationToken.None");
+            template.WriteLine(").ConfigureAwait(false);");
+
+            return null;
+        }
+
+        /// <summary>
         /// Writes a synchronous method declaration.
         /// </summary>
         private string LoadTemplate_KnownType(Template template, Context context)
@@ -303,6 +344,7 @@ namespace Opc.Ua.CodeGenerator
 
             return null;
         }
+
 
         /// <summary>
         /// Writes the classes and interaces that implement a UA server.
@@ -367,7 +409,15 @@ namespace Opc.Ua.CodeGenerator
                 TemplatePath + "ServerApi.InterfaceMethod.cs",
                 datatypes,
                 null,
-                new WriteTemplateEventHandler(WriteTemplate_InterfaceMethod));
+                new WriteTemplateEventHandler(WriteTemplate_InterfaceSyncMethod));
+
+            AddTemplate(
+                template,
+                "// _ServerAsyncApi_",
+                TemplatePath + "ServerApi.InterfaceMethod.cs",
+                datatypes,
+                null,
+                new WriteTemplateEventHandler(WriteTemplate_InterfaceAsyncMethod));
 
             AddTemplate(
                 template,
@@ -383,7 +433,7 @@ namespace Opc.Ua.CodeGenerator
         /// <summary>
         /// Copies the response paramaters into the request object.
         /// </summary>
-        private bool WriteTemplate_InterfaceMethod(Template template, Context context)
+        private bool WriteTemplate_InterfaceSyncMethod(Template template, Context context)
         {
             ServiceType serviceType = context.Target as ServiceType;
 
@@ -400,6 +450,33 @@ namespace Opc.Ua.CodeGenerator
                 null,
                 new ServiceType[] { serviceType } ,
                 new LoadTemplateEventHandler(LoadTemplate_SyncParameters),
+                null);
+
+            bool result = template.WriteTemplate(context);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Copies the response paramaters into the request object.
+        /// </summary>
+        private bool WriteTemplate_InterfaceAsyncMethod(Template template, Context context)
+        {
+            ServiceType serviceType = context.Target as ServiceType;
+
+            if (serviceType == null)
+            {
+                return false;
+            }
+
+            template.AddReplacement("_NAME_", serviceType.Name);
+
+            AddTemplate(
+                template,
+                "void Interface();",
+                null,
+                new ServiceType[] { serviceType },
+                new LoadTemplateEventHandler(LoadTemplate_AsyncParameters),
                 null);
 
             bool result = template.WriteTemplate(context);
