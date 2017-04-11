@@ -49,8 +49,6 @@ public async System.Threading.Tasks.Task<IServiceResponse> _NAME_(IServiceReques
 
         if (ServerInstanceAsync != null)
         {
-            response = new _NAME_Response();
-            
             InvokeServiceAsync();
         }
         else
@@ -58,17 +56,14 @@ public async System.Threading.Tasks.Task<IServiceResponse> _NAME_(IServiceReques
             response = await System.Threading.Tasks.Task.Run( () => 
             {
                 response = new _NAME_Response();
-            
                 // DeclareResponseParameters
 
+                SecureChannelContext.Current = incoming.ChannelContext;
                 InvokeService();
 
                 // SetResponseParameters
-
                 return response;
-
-            } 
-            ).ConfigureAwait(false);
+            }).ConfigureAwait(false);
         }
     }
     finally
@@ -127,9 +122,7 @@ public async System.Threading.Tasks.Task<_NAME_ResponseMessage> _NAME_Async(_NAM
         // set the request context.
         SetRequestContext(RequestEncoding.Xml);
 
-        response = (_NAME_Response)await ProcessRequestAsync(
-            SecureChannelContext.Current, 
-            message._NAME_Request).ConfigureAwait(false);
+        response = (_NAME_Response)await ProcessRequestAsync(message._NAME_Request).ConfigureAwait(false);
 
         OnResponseSent(response);
 
@@ -144,10 +137,10 @@ public async System.Threading.Tasks.Task<_NAME_ResponseMessage> _NAME_Async(_NAM
 }
 #endif
 
-/// <summary>
-/// Asynchronously calls the _NAME_ service.
-/// </summary>
-public virtual IAsyncResult Begin_NAME_(_NAME_Message message, AsyncCallback callback, object callbackData)
+    /// <summary>
+    /// Asynchronously calls the _NAME_ service.
+    /// </summary>
+    public virtual IAsyncResult Begin_NAME_(_NAME_Message message, AsyncCallback callback, object callbackData)
 {
     try
     {

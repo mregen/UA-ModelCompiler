@@ -3,10 +3,18 @@
 #if (!OPCUA_EXCLUDE__NAME_)
 public partial class _NAME_Request : IServiceRequest
 {
+#if (NET_STANDARD)
+    /// <summary cref="IServiceRequest.ChannelContext" />
+    public SecureChannelContext ChannelContext { get; set; }
+#endif
 }
 
 public partial class _NAME_Response : IServiceResponse
 {
+#if (NET_STANDARD)
+    /// <summary cref="IServiceResponse.ChannelContext" />
+    public SecureChannelContext ChannelContext { get; set; }
+#endif
 }
 
 /// <summary>
