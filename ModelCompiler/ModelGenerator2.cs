@@ -2358,7 +2358,7 @@ namespace Opc.Ua.ModelCompiler
 
                 AddTemplate(
                     template,
-                    "result = OnCall(context);",
+                    "result = OnCall(_context);",
                     null,
                     new MethodDesign[] { method },
                     new LoadTemplateEventHandler(LoadTemplate_OnCallImplementation),
@@ -3342,13 +3342,13 @@ namespace Opc.Ua.ModelCompiler
             }
 
             template.WriteNextLine(context.Prefix);
-            template.Write("ISystemContext context,");
+            template.Write("ISystemContext _context,");
 
             template.WriteNextLine(context.Prefix);
-            template.Write("MethodState method,");
+            template.Write("MethodState _method,");
 
             template.WriteNextLine(context.Prefix);
-            template.Write("NodeId objectId");
+            template.Write("NodeId _objectId");
 
             if (method.InputArguments != null)
             {
@@ -3380,7 +3380,7 @@ namespace Opc.Ua.ModelCompiler
         }
         #endregion
 
-        #region "result = OnCall(context);"
+        #region "result = OnCall(_context);"
         private string LoadTemplate_OnCallImplementation(Template template, Context context)
         {
             MethodDesign method = context.Target as MethodDesign;
@@ -3394,13 +3394,13 @@ namespace Opc.Ua.ModelCompiler
             template.Write("result = OnCall(");
 
             template.WriteNextLine(context.Prefix);
-            template.Write("    context,");
+            template.Write("    _context,");
 
             template.WriteNextLine(context.Prefix);
             template.Write("    this,");
 
             template.WriteNextLine(context.Prefix);
-            template.Write("    objectId");
+            template.Write("    _objectId");
 
             if (method.InputArguments != null)
             {
