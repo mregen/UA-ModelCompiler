@@ -301,7 +301,7 @@
   <opc:ObjectType SymbolicName="AngleConditionType" BaseType="MTConditionType">
   </opc:ObjectType>
 
-  <opc:ObjectType SymbolicName="Angular-AccelerationConditionType" BaseType="MTConditionType">
+  <opc:ObjectType SymbolicName="Angular_AccelerationConditionType" BaseType="MTConditionType">
   </opc:ObjectType>
 
   <opc:ObjectType SymbolicName="Angular_VelocityConditionType" BaseType="MTConditionType">
