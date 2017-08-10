@@ -107,6 +107,7 @@
     </xs:sequence>
     <xs:attribute name="Name" type="xs:string" use="required" />
     <xs:attribute name="Value" type="xs:int" use="optional" />
+    <xs:attribute name="BitMask" type="xs:string" use="optional" />
   </xs:complexType>
 
   <xs:complexType name="EnumeratedType">
@@ -115,6 +116,7 @@
         <xs:sequence>
           <xs:element name="Value" type="EnumeratedValue" maxOccurs="unbounded" />
         </xs:sequence>
+        <xs:attribute name="IsOptionSet" type="xs:boolean" default="false" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

@@ -35,6 +35,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
 using System.Reflection;
+using System.Globalization;
 
 namespace Opc.Ua.ModelCompiler
 {
@@ -130,6 +131,7 @@ namespace Opc.Ua.ModelCompiler
             // set built in browse names.
             m_browseNames.Add(new XmlQualifiedName("DefaultBinary", DefaultNamespace), "Default Binary");
             m_browseNames.Add(new XmlQualifiedName("DefaultXml", DefaultNamespace), "Default XML");
+            m_browseNames.Add(new XmlQualifiedName("DefaultJson", DefaultNamespace), "Default JSON");
             m_browseNames.Add(new XmlQualifiedName("InputArguments", DefaultNamespace), "InputArguments");
             m_browseNames.Add(new XmlQualifiedName("OutputArguments", DefaultNamespace), "OutputArguments");
 
@@ -541,6 +543,12 @@ namespace Opc.Ua.ModelCompiler
                 parameter.IdentifierSpecified = true;
             }
 
+            if (!String.IsNullOrEmpty(value.BitMask))
+            {
+                parameter.BitMask = value.BitMask;
+                parameter.IdentifierSpecified = false;
+            }
+
             return parameter;
         }
 
@@ -691,6 +699,12 @@ namespace Opc.Ua.ModelCompiler
                 {
                     design.BaseType = new XmlQualifiedName("Enumeration", DefaultNamespace);
 
+                    if (enumeratedType.IsOptionSet)
+                    {
+                        design.BaseType = new XmlQualifiedName("UInt32", DefaultNamespace);
+                        design.IsOptionSet = true;
+                    }
+
                     if (enumeratedType.Value != null && enumeratedType.Value.Length > 0)
                     {
                         List<Parameter> parameters = new List<Parameter>();
@@ -790,11 +804,11 @@ namespace Opc.Ua.ModelCompiler
             List<NodeDesign> nodes = new List<NodeDesign>();
             nodes.AddRange(dictionary.Items);
 
-
             if (hasDataTypesDefined)
             {
-                AddDataTypeDictionary(dictionary, dictionary.TargetNamespaceInfo, true, nodes);
-                AddDataTypeDictionary(dictionary, dictionary.TargetNamespaceInfo, false, nodes);
+                AddDataTypeDictionary(dictionary, dictionary.TargetNamespaceInfo, EncodingType.Binary, nodes);
+                AddDataTypeDictionary(dictionary, dictionary.TargetNamespaceInfo, EncodingType.Xml, nodes);
+                AddDataTypeDictionary(dictionary, dictionary.TargetNamespaceInfo, EncodingType.Json, nodes);
 
                 foreach (NodeDesign node in dictionary.Items)
                 {
@@ -1144,64 +1158,101 @@ namespace Opc.Ua.ModelCompiler
                 return;
             }
 
-            int index = 0;
-            bool sequentenial = true;
-
-            foreach (Parameter parameter in dataType.Fields)
-            {
-                if (parameter.Identifier != index)
-                {
-                    sequentenial = false;
-                    break;
-                }
-
-                index++;
-            }
-
-            if (sequentenial)
+            if (dataType.IsOptionSet)
             {
                 List<Opc.Ua.LocalizedText> values = new List<Opc.Ua.LocalizedText>();
 
-                foreach (Parameter parameter in dataType.Fields)
+                int last = 0;
+
+                for (int ii = 0; ii < 32; ii++)
                 {
-                    values.Add(new Opc.Ua.LocalizedText(String.Empty, parameter.Name));
+                    int hit = (int)1 << ii;
+
+                    foreach (Parameter parameter in dataType.Fields)
+                    {
+                        if (parameter.Identifier == hit)
+                        {
+                            while (last++ < ii)
+                            {
+                                values.Add(new Opc.Ua.LocalizedText(String.Empty, "Reserved"));
+                            }
+
+                            values.Add(new Opc.Ua.LocalizedText(String.Empty, parameter.Name));
+                            last = ii+1;
+                            break;
+                        }
+                    }
                 }
 
                 AddProperty(
                     dataType,
-                    new XmlQualifiedName("EnumStrings", DefaultNamespace),
+                    new XmlQualifiedName("OptionSetValues", DefaultNamespace),
                     new XmlQualifiedName("LocalizedText", DefaultNamespace),
                     ValueRank.Array,
                     values.ToArray(),
                     children);
             }
-
             else
             {
-                List<Opc.Ua.EnumValueType> values = new List<Opc.Ua.EnumValueType>();
+                int index = 0;
+                bool sequentenial = true;
 
                 foreach (Parameter parameter in dataType.Fields)
                 {
-                    Opc.Ua.EnumValueType value = new Opc.Ua.EnumValueType();
-
-                    value.DisplayName = new Opc.Ua.LocalizedText(String.Empty, parameter.Name);
-                    value.Value = parameter.Identifier;
-
-                    if (!parameter.Description.IsAutogenerated)
+                    if (parameter.Identifier != index)
                     {
-                        value.Description = new Opc.Ua.LocalizedText(parameter.Description.Key, String.Empty, parameter.Description.Value);
+                        sequentenial = false;
+                        break;
                     }
 
-                    values.Add(value);
+                    index++;
                 }
 
-                AddProperty(
-                    dataType,
-                    new XmlQualifiedName("EnumValues", DefaultNamespace),
-                    new XmlQualifiedName("EnumValueType", DefaultNamespace),
-                    ValueRank.Array,
-                    values.ToArray(),
-                    children);
+                if (sequentenial)
+                {
+                    List<Opc.Ua.LocalizedText> values = new List<Opc.Ua.LocalizedText>();
+
+                    foreach (Parameter parameter in dataType.Fields)
+                    {
+                        values.Add(new Opc.Ua.LocalizedText(String.Empty, parameter.Name));
+                    }
+
+                    AddProperty(
+                        dataType,
+                        new XmlQualifiedName("EnumStrings", DefaultNamespace),
+                        new XmlQualifiedName("LocalizedText", DefaultNamespace),
+                        ValueRank.Array,
+                        values.ToArray(),
+                        children);
+                }
+
+                else
+                {
+                    List<Opc.Ua.EnumValueType> values = new List<Opc.Ua.EnumValueType>();
+
+                    foreach (Parameter parameter in dataType.Fields)
+                    {
+                        Opc.Ua.EnumValueType value = new Opc.Ua.EnumValueType();
+
+                        value.DisplayName = new Opc.Ua.LocalizedText(String.Empty, parameter.Name);
+                        value.Value = parameter.Identifier;
+
+                        if (!parameter.Description.IsAutogenerated)
+                        {
+                            value.Description = new Opc.Ua.LocalizedText(parameter.Description.Key, String.Empty, parameter.Description.Value);
+                        }
+
+                        values.Add(value);
+                    }
+
+                    AddProperty(
+                        dataType,
+                        new XmlQualifiedName("EnumValues", DefaultNamespace),
+                        new XmlQualifiedName("EnumValueType", DefaultNamespace),
+                        ValueRank.Array,
+                        values.ToArray(),
+                        children);
+                }
             }
 
             dataType.Children = new ListOfChildren();
@@ -1374,81 +1425,94 @@ namespace Opc.Ua.ModelCompiler
         private void AddDataTypeDictionary(
             ModelDesign nodes,
             Namespace ns,
-            bool isXml,
+            EncodingType encodingType,
             IList<NodeDesign> nodesToAdd)
         {
-            DictionaryDesign dictionary = new DictionaryDesign();
-
-            string namespaceUri = ns.Value;
-
-            if (isXml && !String.IsNullOrEmpty(ns.XmlNamespace))
-            {
-                namespaceUri = ns.XmlNamespace;
-            }
-
-            if (!isXml)
-            {
-                dictionary.SymbolicId = new XmlQualifiedName(NodeDesign.CreateSymbolicId(ns.Name, "BinarySchema"), ns.Value);
-            }
-            else
-            {
-                dictionary.SymbolicId = new XmlQualifiedName(NodeDesign.CreateSymbolicId(ns.Name, "XmlSchema"), ns.Value);
-            }
-
-            dictionary.SymbolicName = dictionary.SymbolicId;
-            dictionary.BrowseName = ns.Prefix;
-            dictionary.DisplayName = new LocalizedText();
-            dictionary.DisplayName.IsAutogenerated = true;
-            dictionary.DisplayName.Value = dictionary.BrowseName;
-            dictionary.Description = new LocalizedText();
-            dictionary.Description.IsAutogenerated = true;
-            dictionary.Description.Value = dictionary.BrowseName;
-            dictionary.WriteAccess = 0;
-            dictionary.TypeDefinition = new XmlQualifiedName("DataTypeDictionaryType", DefaultNamespace);
-            dictionary.TypeDefinitionNode = (VariableTypeDesign)FindNode(dictionary.TypeDefinition, typeof(VariableTypeDesign), dictionary.SymbolicId.Name, "TypeDefinition");
-            dictionary.DataType = new XmlQualifiedName("ByteString", DefaultNamespace);
-            dictionary.DataTypeNode = (DataTypeDesign)FindNode(dictionary.DataType, typeof(DataTypeDesign), dictionary.SymbolicId.Name, "DataType");
-            dictionary.ValueRank = ValueRank.Scalar;
-            dictionary.ValueRankSpecified = true;
-            dictionary.ArrayDimensions = null;
-            dictionary.AccessLevel = AccessLevel.Read;
-            dictionary.AccessLevelSpecified = true;
-            dictionary.MinimumSamplingInterval = 0;
-            dictionary.MinimumSamplingIntervalSpecified = true;
-            dictionary.Historizing = false;
-            dictionary.HistorizingSpecified = true;
-
-            if (ns.Value == DefaultNamespace)
-            {
-                dictionary.PartNo = 5;
-            }
-
-            Reference reference = new Reference();
-
-            reference.ReferenceType = new XmlQualifiedName("HasComponent", DefaultNamespace);
-            reference.IsInverse = true;
-            reference.IsOneWay = false;
-
-            if (isXml)
-            {
-                reference.TargetId = new XmlQualifiedName("XmlSchema_TypeSystem", DefaultNamespace);
-            }
-            else
-            {
-                reference.TargetId = new XmlQualifiedName("OPCBinarySchema_TypeSystem", DefaultNamespace);
-            }
-
-            dictionary.References = new Reference[] { reference };
-
+            DictionaryDesign dictionary = null;
             List<InstanceDesign> descriptions = new List<InstanceDesign>();
 
-            AddProperty(
-                dictionary,
-                new XmlQualifiedName("NamespaceUri", DefaultNamespace),
-                new XmlQualifiedName("String", DefaultNamespace),
-                ValueRank.Scalar,
-                namespaceUri,
-                descriptions);
+            if (encodingType != EncodingType.Json)
+            {
+                dictionary = new DictionaryDesign();
+
+                string namespaceUri = ns.Value;
+                bool isXml = encodingType == EncodingType.Xml;
+
+                if (isXml && !String.IsNullOrEmpty(ns.XmlNamespace))
+                {
+                    namespaceUri = ns.XmlNamespace;
+                }
+
+                if (!isXml)
+                {
+                    dictionary.SymbolicId = new XmlQualifiedName(NodeDesign.CreateSymbolicId(ns.Name, "BinarySchema"), ns.Value);
+                }
+                else
+                {
+                    dictionary.SymbolicId = new XmlQualifiedName(NodeDesign.CreateSymbolicId(ns.Name, "XmlSchema"), ns.Value);
+                }
+
+                dictionary.SymbolicName = dictionary.SymbolicId;
+                dictionary.BrowseName = ns.Prefix;
+                dictionary.DisplayName = new LocalizedText();
+                dictionary.DisplayName.IsAutogenerated = true;
+                dictionary.DisplayName.Value = dictionary.BrowseName;
+                dictionary.Description = new LocalizedText();
+                dictionary.Description.IsAutogenerated = true;
+                dictionary.Description.Value = dictionary.BrowseName;
+                dictionary.WriteAccess = 0;
+                dictionary.TypeDefinition = new XmlQualifiedName("DataTypeDictionaryType", DefaultNamespace);
+                dictionary.TypeDefinitionNode = (VariableTypeDesign)FindNode(dictionary.TypeDefinition, typeof(VariableTypeDesign), dictionary.SymbolicId.Name, "TypeDefinition");
+                dictionary.DataType = new XmlQualifiedName("ByteString", DefaultNamespace);
+                dictionary.DataTypeNode = (DataTypeDesign)FindNode(dictionary.DataType, typeof(DataTypeDesign), dictionary.SymbolicId.Name, "DataType");
+                dictionary.ValueRank = ValueRank.Scalar;
+                dictionary.ValueRankSpecified = true;
+                dictionary.ArrayDimensions = null;
+                dictionary.AccessLevel = AccessLevel.Read;
+                dictionary.AccessLevelSpecified = true;
+                dictionary.MinimumSamplingInterval = 0;
+                dictionary.MinimumSamplingIntervalSpecified = true;
+                dictionary.Historizing = false;
+                dictionary.HistorizingSpecified = true;
+
+                if (ns.Value == DefaultNamespace)
+                {
+                    dictionary.PartNo = 5;
+                }
+
+                Reference reference = new Reference();
+
+                reference.ReferenceType = new XmlQualifiedName("HasComponent", DefaultNamespace);
+                reference.IsInverse = true;
+                reference.IsOneWay = false;
+
+                if (isXml)
+                {
+                    reference.TargetId = new XmlQualifiedName("XmlSchema_TypeSystem", DefaultNamespace);
+                }
+                else
+                {
+                    reference.TargetId = new XmlQualifiedName("OPCBinarySchema_TypeSystem", DefaultNamespace);
+                }
+
+                dictionary.References = new Reference[] { reference };
+
+                AddProperty(
+                    dictionary,
+                    new XmlQualifiedName("NamespaceUri", DefaultNamespace),
+                    new XmlQualifiedName("String", DefaultNamespace),
+                    ValueRank.Scalar,
+                    namespaceUri,
+                    descriptions);
+
+                AddProperty(
+                    dictionary,
+                    new XmlQualifiedName("Deprecated", DefaultNamespace),
+                    new XmlQualifiedName("Boolean", DefaultNamespace),
+                    ValueRank.Scalar,
+                    true,
+                    descriptions);
+            }
 
             foreach (NodeDesign node in nodes.Items)
             {
@@ -1461,17 +1525,20 @@ namespace Opc.Ua.ModelCompiler
 
                 if (dataType.BasicDataType == BasicDataType.UserDefined)
                 {
-                    AddDataTypeDescription(dataType, dictionary, descriptions, isXml, nodesToAdd);
+                    AddDataTypeDescription(dataType, dictionary, descriptions, encodingType, nodesToAdd);
                     continue;
                 }
             }
 
-            dictionary.Children = new ListOfChildren();
-            dictionary.Children.Items = descriptions.ToArray();
+            if (dictionary != null)
+            {
+                dictionary.Children = new ListOfChildren();
+                dictionary.Children.Items = descriptions.ToArray();
 
-            m_nodes[dictionary.SymbolicId] = dictionary;
-            Log("Added {1}: {0}", dictionary.SymbolicId.Name, dictionary.GetType().Name);
-            nodesToAdd.Add(dictionary);
+                m_nodes[dictionary.SymbolicId] = dictionary;
+                Log("Added {1}: {0}", dictionary.SymbolicId.Name, dictionary.GetType().Name);
+                nodesToAdd.Add(dictionary);
+            }
         }
 
         private void AddProperty(
@@ -1524,68 +1591,80 @@ namespace Opc.Ua.ModelCompiler
             DataTypeDesign dataType,
             DictionaryDesign dictionary,
             IList<InstanceDesign> descriptions,
-            bool isXml,
+            EncodingType encodingType,
             IList<NodeDesign> nodesToAdd)
         {
-            VariableDesign description = new VariableDesign();
+            VariableDesign description = null;
 
-            description.Parent = dictionary;
-            description.ReferenceType = new XmlQualifiedName("HasComponent", DefaultNamespace);
-            description.ModellingRule = ModellingRule.Mandatory;
-            description.ModellingRuleSpecified = true;
-            description.SymbolicId = new XmlQualifiedName(NodeDesign.CreateSymbolicId(dictionary.SymbolicId.Name, dataType.SymbolicId.Name), dictionary.SymbolicId.Namespace);
-            description.SymbolicName = new XmlQualifiedName(dataType.SymbolicId.Name, description.SymbolicId.Namespace);
-            description.BrowseName = dataType.BrowseName;
-            description.DisplayName = new LocalizedText();
-            description.DisplayName.IsAutogenerated = true;
-            description.DisplayName.Value = description.BrowseName;
-            description.Description = new LocalizedText();
-            description.Description.IsAutogenerated = true;
-            description.Description.Value = description.BrowseName;
-            description.WriteAccess = 0;
-            description.TypeDefinition = new XmlQualifiedName("DataTypeDescriptionType", DefaultNamespace);
-            description.TypeDefinitionNode = (VariableTypeDesign)FindNode(description.TypeDefinition, typeof(VariableTypeDesign), description.SymbolicId.Name, "TypeDefinition");
-            description.DataType = new XmlQualifiedName("String", DefaultNamespace);
-            description.DataTypeNode = (DataTypeDesign)FindNode(description.DataType, typeof(DataTypeDesign), description.SymbolicId.Name, "DataType");
-            description.ValueRank = ValueRank.Scalar;
-            description.ValueRankSpecified = true;
-            description.ArrayDimensions = null;
-            description.AccessLevel = AccessLevel.Read;
-            description.AccessLevelSpecified = true;
-            description.MinimumSamplingInterval = 0;
-            description.MinimumSamplingIntervalSpecified = true;
-            description.Historizing = false;
-            description.HistorizingSpecified = true;
-            description.PartNo = dataType.PartNo;
-            description.NotInAddressSpace = dataType.NotInAddressSpace;
+            if (encodingType != EncodingType.Json)
+            {
+                description = new VariableDesign();
 
-            if (isXml)
-            {
-                description.DecodedValue = Utils.Format("//xs:element[@name='{0}']", dataType.SymbolicName.Name);
-            }
-            else
-            {
-                description.DecodedValue = Utils.Format("{0}", dataType.SymbolicName.Name);
+                description.Parent = dictionary;
+                description.ReferenceType = new XmlQualifiedName("HasComponent", DefaultNamespace);
+                description.ModellingRule = ModellingRule.Mandatory;
+                description.ModellingRuleSpecified = true;
+                description.SymbolicId = new XmlQualifiedName(NodeDesign.CreateSymbolicId(dictionary.SymbolicId.Name, dataType.SymbolicId.Name), dictionary.SymbolicId.Namespace);
+                description.SymbolicName = new XmlQualifiedName(dataType.SymbolicId.Name, description.SymbolicId.Namespace);
+                description.BrowseName = dataType.BrowseName;
+                description.DisplayName = new LocalizedText();
+                description.DisplayName.IsAutogenerated = true;
+                description.DisplayName.Value = description.BrowseName;
+                description.Description = new LocalizedText();
+                description.Description.IsAutogenerated = true;
+                description.Description.Value = description.BrowseName;
+                description.WriteAccess = 0;
+                description.TypeDefinition = new XmlQualifiedName("DataTypeDescriptionType", DefaultNamespace);
+                description.TypeDefinitionNode = (VariableTypeDesign)FindNode(description.TypeDefinition, typeof(VariableTypeDesign), description.SymbolicId.Name, "TypeDefinition");
+                description.DataType = new XmlQualifiedName("String", DefaultNamespace);
+                description.DataTypeNode = (DataTypeDesign)FindNode(description.DataType, typeof(DataTypeDesign), description.SymbolicId.Name, "DataType");
+                description.ValueRank = ValueRank.Scalar;
+                description.ValueRankSpecified = true;
+                description.ArrayDimensions = null;
+                description.AccessLevel = AccessLevel.Read;
+                description.AccessLevelSpecified = true;
+                description.MinimumSamplingInterval = 0;
+                description.MinimumSamplingIntervalSpecified = true;
+                description.Historizing = false;
+                description.HistorizingSpecified = true;
+                description.PartNo = dataType.PartNo;
+                description.NotInAddressSpace = dataType.NotInAddressSpace;
+
+                if (encodingType == EncodingType.Xml)
+                {
+                    description.DecodedValue = Utils.Format("//xs:element[@name='{0}']", dataType.SymbolicName.Name);
+                }
+                else
+                {
+                    description.DecodedValue = Utils.Format("{0}", dataType.SymbolicName.Name);
+                }
+
+                if (!dataType.NotInAddressSpace)
+                {
+                    descriptions.Add(description);
+                }
+
+                m_nodes[description.SymbolicId] = description;
+                Log("Added {1}: {0}", description.SymbolicId.Name, description.GetType().Name);
             }
 
             if (dataType.BasicDataType == BasicDataType.UserDefined)
             {
-                AddDataTypeEncoding(dataType, description, isXml, nodesToAdd);
+                AddDataTypeEncoding(dataType, description, encodingType, nodesToAdd);
             }
+        }
 
-            if (!dataType.NotInAddressSpace)
-            {
-                descriptions.Add(description);
-            }
-
-            m_nodes[description.SymbolicId] = description;
-            Log("Added {1}: {0}", description.SymbolicId.Name, description.GetType().Name);
+        private enum EncodingType
+        {
+            Binary = 0,
+            Xml = 1,
+            Json = 2
         }
 
         private void AddDataTypeEncoding(
             DataTypeDesign dataType,
             VariableDesign description,
-            bool isXml,
+            EncodingType encodingType,
             IList<NodeDesign> nodesToAdd)
         {
             ObjectDesign encoding = new ObjectDesign();
@@ -1593,11 +1672,17 @@ namespace Opc.Ua.ModelCompiler
             encoding.Parent = null;
             encoding.ReferenceType = null;
 
-            if (isXml)
+            if (encodingType == EncodingType.Xml)
             {
                 encoding.SymbolicId = new XmlQualifiedName(dataType.SymbolicId.Name + "_Encoding_DefaultXml", dataType.SymbolicId.Namespace);
                 encoding.SymbolicName = new XmlQualifiedName("DefaultXml", DefaultNamespace);
                 encoding.BrowseName = "Default XML";
+            }
+            else if (encodingType == EncodingType.Json)
+            {
+                encoding.SymbolicId = new XmlQualifiedName(dataType.SymbolicId.Name + "_Encoding_DefaultJson", dataType.SymbolicId.Namespace);
+                encoding.SymbolicName = new XmlQualifiedName("DefaultJson", DefaultNamespace);
+                encoding.BrowseName = "Default JSON";
             }
             else
             {
@@ -1630,15 +1715,22 @@ namespace Opc.Ua.ModelCompiler
                 reference1.TargetId = dataType.SymbolicId;
                 reference1.TargetNode = dataType;
 
-                Reference reference2 = new Reference();
+                if (description != null)
+                {
+                    Reference reference2 = new Reference();
 
-                reference2.ReferenceType = new XmlQualifiedName("HasDescription", DefaultNamespace);
-                reference2.IsInverse = false;
-                reference2.IsOneWay = false;
-                reference2.TargetId = description.SymbolicId;
-                reference2.TargetNode = description;
+                    reference2.ReferenceType = new XmlQualifiedName("HasDescription", DefaultNamespace);
+                    reference2.IsInverse = false;
+                    reference2.IsOneWay = false;
+                    reference2.TargetId = description.SymbolicId;
+                    reference2.TargetNode = description;
 
-                encoding.References = new Reference[] { reference1, reference2 };
+                    encoding.References = new Reference[] { reference1, reference2 };
+                }
+                else
+                {
+                    encoding.References = new Reference[] { reference1 };
+                }
             }
 
             m_nodes[encoding.SymbolicId] = encoding;
@@ -1826,19 +1918,27 @@ namespace Opc.Ua.ModelCompiler
             return identifiers;
         }
 
+        private uint FindUnusedId(HashSet<uint> identifiers)
+        {
+            uint id = 15000;
+            while (identifiers.Contains(++id));
+            identifiers.Add(id);
+            return id;
+        }
+
         private object AssignIdToNode(
             NodeDesign node,
             Dictionary<string, object> identifiers,
             SortedDictionary<object, IdInfo> uniqueIdentifiers,
             Dictionary<string, object> duplicateIdentifiers,
-            ref uint nextId)
+            HashSet<uint> assignedIds)
         {
             // assign identifier if one has not already been assigned.
             object id = null;
 
             if (!identifiers.TryGetValue(node.SymbolicId.Name, out id))
             {
-                id = nextId++;
+                id = FindUnusedId(assignedIds);
                 identifiers.Add(node.SymbolicId.Name, id);
             }
 
@@ -1884,20 +1984,15 @@ namespace Opc.Ua.ModelCompiler
             Dictionary<string, object> identifiers = ParseFile(istrm);
             SortedDictionary<object, IdInfo> uniqueIdentifiers = new SortedDictionary<object, IdInfo>();
             Dictionary<string, object> duplicateIdentifiers = new Dictionary<string, object>();
+            HashSet<uint> assignedIds = new HashSet<uint>();
 
-            uint maxId = m_startId;
-
-            // find the max id already in use.
             foreach (object existingId in identifiers.Values)
             {
                 uint? numericId = existingId as uint?;
 
                 if (numericId != null)
                 {
-                    if (numericId.Value >= maxId)
-                    {
-                        maxId = numericId.Value+1;
-                    }
+                    assignedIds.Add(numericId.Value);
                 }
             }
 
@@ -1907,7 +2002,7 @@ namespace Opc.Ua.ModelCompiler
                 NodeDesign node = dictionary.Items[ii];
 
                 // assign identifier if one has not already been assigned.
-                object id = AssignIdToNode(node, identifiers, uniqueIdentifiers, duplicateIdentifiers, ref maxId);
+                object id = AssignIdToNode(node, identifiers, uniqueIdentifiers, duplicateIdentifiers, assignedIds);
 
                 if (node.Hierarchy == null)
                 {
@@ -1938,7 +2033,7 @@ namespace Opc.Ua.ModelCompiler
                         continue;
                     }
 
-                    current.Identifier = AssignIdToNode(current.Instance, identifiers, uniqueIdentifiers, duplicateIdentifiers, ref maxId);
+                    current.Identifier = AssignIdToNode(current.Instance, identifiers, uniqueIdentifiers, duplicateIdentifiers, assignedIds);
                 }
             }
 
@@ -1999,7 +2094,7 @@ namespace Opc.Ua.ModelCompiler
 
             StreamReader reader = new StreamReader(istrm);
 
-            uint maxId = m_startId;
+            HashSet<uint> assignedIds = new HashSet<uint>();
 
             try
             {
@@ -2040,12 +2135,7 @@ namespace Opc.Ua.ModelCompiler
                         else
                         {
                             uint numericId = Convert.ToUInt32(id);
-
-                            if (maxId <= numericId)
-                            {
-                                maxId = numericId+1;
-                            }
-
+                            assignedIds.Add(numericId);
                             identifiers[name] = numericId;
                         }
                     }
@@ -2071,11 +2161,7 @@ namespace Opc.Ua.ModelCompiler
                 if (node.NumericIdSpecified)
                 {
                     identifiers[node.SymbolicId.Name] = node.NumericId;
-
-                    if (maxId <= node.NumericId)
-                    {
-                        maxId = node.NumericId+1;
-                    }
+                    assignedIds.Add(node.NumericId);
                 }
             }
 
@@ -2093,8 +2179,9 @@ namespace Opc.Ua.ModelCompiler
 
                 if (!identifiers.ContainsKey(node.SymbolicId.Name))
                 {
-                    id = node.NumericId = maxId++;
+                    id = node.NumericId = FindUnusedId(assignedIds);
                     node.NumericIdSpecified = true;
+                    identifiers.Add(node.SymbolicId.Name, id);
                 }
                 else
                 {
@@ -2175,7 +2262,6 @@ namespace Opc.Ua.ModelCompiler
                 ImportInstance((InstanceDesign)node);
             }
 
-            // add to table.
             m_nodes.Add(node.SymbolicId, node);
             Log("Imported {1}: {0}", node.SymbolicId.Name, node.GetType().Name);
 
@@ -2549,7 +2635,7 @@ namespace Opc.Ua.ModelCompiler
                 */
 
                 dataType.IsStructure = (dataType.BaseType == new XmlQualifiedName("Structure", DefaultNamespace));
-                dataType.IsEnumeration = (dataType.BaseType == new XmlQualifiedName("Enumeration", DefaultNamespace));
+                dataType.IsEnumeration = (dataType.BaseType == new XmlQualifiedName("Enumeration", DefaultNamespace) || dataType.IsOptionSet);
                 dataType.HasFields = ImportParameters(dataType, dataType.Fields, "Field");
                 dataType.HasEncodings = ImportEncodings(dataType);
             }
@@ -2634,6 +2720,7 @@ namespace Opc.Ua.ModelCompiler
                     encoding.Description.IsAutogenerated = true;
                 }
 
+                // add to table.
                 m_nodes.Add(encoding.SymbolicId, encoding);
                 Log("Imported {1}: {0}", encoding.SymbolicId.Name, encoding.GetType().Name);
 
@@ -2910,7 +2997,19 @@ namespace Opc.Ua.ModelCompiler
                 {
                     id = parameter.Identifier;
                 }
-                else
+                else if (!String.IsNullOrEmpty(parameter.BitMask))
+                {
+                    ulong mask = 0;
+
+                    if (UInt64.TryParse(parameter.BitMask, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out mask))
+                    {
+                        var bytes = BitConverter.GetBytes(mask);
+                        parameter.Identifier = BitConverter.ToInt32(bytes, 0);
+                        parameter.IdentifierSpecified = true;
+                    }
+                }
+
+                if (!parameter.IdentifierSpecified)
                 {
                     parameter.Identifier = ++id;
                     parameter.IdentifierSpecified = true;
@@ -3127,7 +3226,7 @@ namespace Opc.Ua.ModelCompiler
                 ValidateParameters(dataType, dataType.Fields);
 
                 dataType.IsStructure   = IsTypeOf(dataType, new XmlQualifiedName("Structure", DefaultNamespace));
-                dataType.IsEnumeration = IsTypeOf(dataType, new XmlQualifiedName("Enumeration", DefaultNamespace));
+                dataType.IsEnumeration = IsTypeOf(dataType, new XmlQualifiedName("Enumeration", DefaultNamespace)) || dataType.IsOptionSet;
                 dataType.BasicDataType = GetBasicDataType(dataType);
 
                 if (!dataType.IsStructure)
@@ -3146,7 +3245,7 @@ namespace Opc.Ua.ModelCompiler
                     }
                     else
                     {
-                        if (dataType.HasFields)
+                        if (dataType.HasFields && !dataType.IsOptionSet)
                         {
                             throw Exception("The datatype is a simple type but it has fields defined: {0}", type.SymbolicId.Name);
                         }
@@ -3159,7 +3258,8 @@ namespace Opc.Ua.ModelCompiler
                     {
                         EncodingDesign xmlEncoding = CreateEncoding(dataType, new XmlQualifiedName("DefaultXml", DefaultNamespace));
                         EncodingDesign binaryEncoding = CreateEncoding(dataType, new XmlQualifiedName("DefaultBinary", DefaultNamespace));
-                        dataType.Encodings = new EncodingDesign[] { xmlEncoding, binaryEncoding };
+                        EncodingDesign jsonEncoding = CreateEncoding(dataType, new XmlQualifiedName("DefaultJson", DefaultNamespace));
+                        dataType.Encodings = new EncodingDesign[] { xmlEncoding, binaryEncoding, jsonEncoding };
                         dataType.HasEncodings = true;
                     }
 
@@ -3756,6 +3856,11 @@ namespace Opc.Ua.ModelCompiler
                         return (BasicDataType)Enum.Parse(typeof(BasicDataType), dataType.SymbolicName.Name);
                     }
                 }
+            }
+
+            if (dataType.IsOptionSet)
+            {
+                return BasicDataType.Enumeration;
             }
 
             // recursively search hierarchy if conversion to enum fails.
@@ -5492,6 +5597,7 @@ namespace Opc.Ua.ModelCompiler
             if ((root.BasicDataType == BasicDataType.Enumeration || root.BasicDataType == BasicDataType.UserDefined) && root.Fields != null && root.Fields.Length > 0)
             {
                 DataTypeDefinition2 definition = new DataTypeDefinition2();
+                definition.DataTypeModifier = ((root.IsOptionSet) ? DataTypeModifier.OptionSet : DataTypeModifier.None);
 
                 List<DataTypeDefinitionField> fields = new List<DataTypeDefinitionField>();
 
