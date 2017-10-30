@@ -16,20 +16,6 @@ public interface I_ServiceSet_Server : IServerBase
 }
 #endregion
 
-#if (OPCUA_ASYNC_TASK || NET_STANDARD)
-#region I_ServiceSet_ServerAsync Interface
-/// <summary>
-/// An interface to a UA server implementation using asynchronous Task based callbacks.
-/// </summary>
-/// <exclude />
-[System.CodeDom.Compiler.GeneratedCodeAttribute("Opc.Ua.CodeGenerator", "1.0.0.0")]
-public interface I_ServiceSet_ServerAsync : IServerAsyncBase
-{
-    // _ServerAsyncApi_
-}
-#endregion
-#endif
-
 #region _ServiceSet_ServerBase Class
 /// <summary>
 /// A basic implementation of the UA server.

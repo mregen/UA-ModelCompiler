@@ -3,7 +3,6 @@ class Placeholder
 // ***START***
 #region _NAME_ Service
 #if (!OPCUA_EXCLUDE__NAME_)
-#if (!NET_STANDARD)
 /// <summary>
 /// Invokes the _NAME_ service.
 /// </summary>
@@ -32,47 +31,6 @@ public IServiceResponse _NAME_(IServiceRequest incoming)
 
     return response;
 }
-
-#else
-/// <summary>
-/// Asynchronously invokes the _NAME_ service - uses the async server interface if the server supports it.
-/// </summary>
-public async System.Threading.Tasks.Task<IServiceResponse> _NAME_(IServiceRequest incoming)
-{
-    _NAME_Response response = null;
-
-    try
-    {
-        OnRequestReceived(incoming);
-
-        _NAME_Request request = (_NAME_Request)incoming;
-
-        if (ServerInstanceAsync != null)
-        {
-            InvokeServiceAsync();
-        }
-        else
-        {
-            response = await System.Threading.Tasks.Task.Run( () => 
-            {
-                response = new _NAME_Response();
-                // DeclareResponseParameters
-
-                SecureChannelContext.Current = incoming.ChannelContext;
-                InvokeService();
-
-                // SetResponseParameters
-                return response;
-            }).ConfigureAwait(false);
-        }
-    }
-    finally
-    {
-        OnResponseSent(response);
-    }
-    return response;
-}
-#endif
 
 #if (OPCUA_USE_SYNCHRONOUS_ENDPOINTS)
 /// <summary>
@@ -108,39 +66,30 @@ public virtual _NAME_ResponseMessage _NAME_(_NAME_Message request)
 /// <summary>
 /// Asynchronously calls the _NAME_ service.
 /// </summary>
-public async System.Threading.Tasks.Task<_NAME_ResponseMessage> _NAME_Async(_NAME_Message message)
+public virtual System.Threading.Tasks.Task<_NAME_ResponseMessage> _NAME_Async(_NAME_Message message)
 {
-    _NAME_Response response = null;
-
-    try
-    {
-        // check for bad data.
-        if (message == null) throw new ArgumentNullException("message");
-
-        OnRequestReceived(message._NAME_Request);
-
-        // set the request context.
-        SetRequestContext(RequestEncoding.Xml);
-
-        response = (_NAME_Response)await ProcessRequestAsync(message._NAME_Request).ConfigureAwait(false);
-
-        OnResponseSent(response);
-
-        return new _NAME_ResponseMessage(response);
-    }
-    catch (Exception e)
-    {
-        Exception fault = CreateSoapFault(message._NAME_Request, e);
-        OnResponseFaultSent(fault);
-        throw fault;
-    }
+    var tcs = new System.Threading.Tasks.TaskCompletionSource<_NAME_ResponseMessage>();
+    Begin_NAME_(message, 
+        new AsyncCallback((result) => 
+        {
+            var completion = (System.Threading.Tasks.TaskCompletionSource<_NAME_ResponseMessage>)result.AsyncState;
+            try 
+            {
+                completion.SetResult(End_NAME_(result));
+            }
+            catch(Exception ex)
+            {
+                completion.SetException(ex);
+            }
+        }), tcs);
+    return tcs.Task;
 }
 #endif
 
-    /// <summary>
-    /// Asynchronously calls the _NAME_ service.
-    /// </summary>
-    public virtual IAsyncResult Begin_NAME_(_NAME_Message message, AsyncCallback callback, object callbackData)
+/// <summary>
+/// Asynchronously calls the _NAME_ service.
+/// </summary>
+public virtual IAsyncResult Begin_NAME_(_NAME_Message message, AsyncCallback callback, object callbackData)
 {
     try
     {

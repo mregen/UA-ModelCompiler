@@ -206,14 +206,6 @@ namespace Opc.Ua.CodeGenerator
 
             AddTemplate(
                 template,
-                "InvokeServiceAsync();",
-                null,
-                new ServiceType[] { serviceType },
-                new LoadTemplateEventHandler(LoadTemplate_InvokeServiceAsyncParameters),
-                null);
-
-            AddTemplate(
-                template,
                 "// SetResponseParameters",
                 null,
                 new ServiceType[] { serviceType } ,
@@ -280,39 +272,6 @@ namespace Opc.Ua.CodeGenerator
             }
 
             template.WriteLine(");");
-
-            return null;
-        }
-
-        /// <summary>
-        /// Writes a asynchronous method declaration.
-        /// </summary>
-        private string LoadTemplate_InvokeServiceAsyncParameters(Template template, Context context)
-        {
-            ServiceType serviceType = context.Target as ServiceType;
-
-            if (serviceType == null)
-            {
-                return null;
-            }
-
-            // write method declaration.
-            template.WriteLine(String.Empty);
-            template.Write(context.Prefix);
-            template.WriteLine("response = await ServerInstanceAsync.{1}Async(", serviceType.Response[0].Name, serviceType.Name);
-
-            if (serviceType.Request != null || serviceType.Request.Length > 0)
-            {
-                foreach (FieldType field in serviceType.Request)
-                {
-                    template.Write(context.Prefix);
-                    template.WriteLine("   request.{0},", field.Name);
-                }
-            }
-
-            template.Write(context.Prefix);
-            template.Write("   System.Threading.CancellationToken.None");
-            template.WriteLine(").ConfigureAwait(false);");
 
             return null;
         }

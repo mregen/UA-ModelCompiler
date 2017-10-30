@@ -56,23 +56,6 @@ public partial class _ServiceSet_Endpoint : EndpointBase, _IEndpoints_
             return ServerForContext as I_ServiceSet_Server;
          }
     }
-    #if (NET_STANDARD)
-    /// <summary>
-    /// The UA server instance that the endpoint is connected to.
-    /// </summary>
-    protected I_ServiceSet_ServerAsync ServerInstanceAsync
-    {
-        get
-        {
-            if (ServiceResult.IsBad(ServerError))
-            {
-                throw new ServiceResultException(ServerError);
-            }
-
-            return ServerForContext as I_ServiceSet_ServerAsync;
-         }
-    }
-    #endif
     #endregion
 
     #region I_ServiceSet_Endpoint Members
