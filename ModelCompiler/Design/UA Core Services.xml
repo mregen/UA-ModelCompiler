@@ -58,7 +58,7 @@
     </opc:Value>
   </opc:EnumeratedType>
 
-  <opc:EnumeratedType Name="PermissionType" IsOptionSet="true" PartNo="3">
+  <opc:EnumeratedType Name="PermissionType" BaseType="s0:UInt16" IsOptionSet="true" PartNo="3">
     <opc:Value Name="None" BitMask="0000" />
     <opc:Value Name="Browse" BitMask="0001" />
     <opc:Value Name="ReadRolePermissions" BitMask="0002" />
@@ -79,8 +79,18 @@
     <opc:Value Name="AddNode" BitMask="10000" />
     <opc:Value Name="All" BitMask="1FFFF" />
   </opc:EnumeratedType>
+  
+  <opc:EnumeratedType Name="AccessLevelType" BaseType="s0:Byte" IsOptionSet="true" PartNo="3">
+    <opc:Value Name="None" BitMask="0000" />
+    <opc:Value Name="CurrentRead" BitMask="0001" />
+    <opc:Value Name="CurrentWrite" BitMask="0002" />
+    <opc:Value Name="HistoryRead" BitMask="0004" />
+    <opc:Value Name="HistoryWrite" BitMask="0010" />
+    <opc:Value Name="StatusWrite" BitMask="0020" />
+    <opc:Value Name="TimestampWrite" BitMask="0040" />
+  </opc:EnumeratedType>
 
-  <opc:EnumeratedType Name="AccessLevelType" IsOptionSet="true" PartNo="3">
+  <opc:EnumeratedType Name="AccessLevelExType" IsOptionSet="true" PartNo="3">
     <opc:Value Name="None" BitMask="0000" />
     <opc:Value Name="CurrentRead" BitMask="0001" />
     <opc:Value Name="CurrentWrite" BitMask="0002" />
@@ -125,6 +135,8 @@
     <opc:Field Name="Description"  DataType="s0:LocalizedText"></opc:Field>
     <opc:Field Name="DataType"  DataType="s0:NodeId"></opc:Field>
     <opc:Field Name="ValueRank"  DataType="s0:Int32"></opc:Field>
+    <opc:Field Name="ArrayDimensions"  DataType="s0:UInt32" ValueRank="0"></opc:Field>
+    <opc:Field Name="MaxStringLength"  DataType="s0:UInt32"></opc:Field>
     <opc:Field Name="IsOptional"  DataType="s0:Boolean"></opc:Field>
   </opc:ComplexType>
 
@@ -895,7 +907,7 @@
     </opc:Response>
   </opc:ServiceType>
 
-  <opc:ComplexType Name="UserIdentityToken" PartNo="4">
+  <opc:ComplexType Name="UserIdentityToken" IsAbstract="true" PartNo="4">
     <opc:Documentation>A base type for a user identity token.</opc:Documentation>
     <opc:Field  Name="PolicyId" DataType="s0:String">
       <opc:Documentation>The policy id specified in a user token policy for the endpoint being used.</opc:Documentation>
@@ -2843,6 +2855,21 @@
     <opc:Field Name="LastMethodSessionId" DataType="s0:NodeId" />
     <opc:Field Name="LastMethodInputArguments" DataType="Argument" ValueRank="0" />
     <opc:Field Name="LastMethodOutputArguments" DataType="Argument" ValueRank="0" />
+    <opc:Field Name="LastMethodCallTime" DataType="UtcTime" />
+    <opc:Field Name="LastMethodReturnStatus" DataType="StatusResult" />
+  </opc:ComplexType>
+
+  <opc:ComplexType Name="ProgramDiagnostic2DataType" PartNo="10">
+    <opc:Field Name="CreateSessionId" DataType="s0:NodeId" />
+    <opc:Field Name="CreateClientName" DataType="s0:String" />
+    <opc:Field Name="InvocationCreationTime" DataType="UtcTime" />
+    <opc:Field Name="LastTransitionTime" DataType="UtcTime" />
+    <opc:Field Name="LastMethodCall" DataType="s0:String" />
+    <opc:Field Name="LastMethodSessionId" DataType="s0:NodeId" />
+    <opc:Field Name="LastMethodInputArguments" DataType="Argument" ValueRank="0" />
+    <opc:Field Name="LastMethodOutputArguments" DataType="Argument" ValueRank="0" />
+    <opc:Field Name="LastMethodInputValues" DataType="s0:Variant" ValueRank="0" />
+    <opc:Field Name="LastMethodOutputValues" DataType="s0:Variant" ValueRank="0" />
     <opc:Field Name="LastMethodCallTime" DataType="UtcTime" />
     <opc:Field Name="LastMethodReturnStatus" DataType="StatusResult" />
   </opc:ComplexType>

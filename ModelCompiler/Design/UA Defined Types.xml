@@ -92,13 +92,13 @@
   <DataType SymbolicName="tns:Structure" NumericId="22" PartNo="3" BaseType="tns:BaseDataType" IsAbstract="true">
     <Description>Describes a value that is any type of structure that can be described with a data encoding.</Description>
   </DataType>
-  <DataType SymbolicName="tns:DataValue" NumericId="23" PartNo="4" BaseType="tns:BaseDataType" NotInAddressSpace="true">
+  <DataType SymbolicName="tns:DataValue" NumericId="23" PartNo="4" BaseType="tns:BaseDataType">
     <Description>Describes a value that is a structure containing a value, a status code and timestamps.</Description>
   </DataType>
-  <DataType SymbolicName="tns:DiagnosticInfo" PartNo="4" BaseType="tns:BaseDataType" NotInAddressSpace="true">
+  <DataType SymbolicName="tns:DiagnosticInfo" PartNo="4" BaseType="tns:BaseDataType">
     <Description>Describes a value that is a structure containing diagnostics associated with a StatusCode.</Description>
   </DataType>
-  <DataType SymbolicName="tns:Image" PartNo="3" BaseType="tns:ByteString">
+  <DataType SymbolicName="tns:Image" PartNo="3" BaseType="tns:ByteString" IsAbstract="true">
     <Description>Describes a value that is an image encoded as a string of bytes.</Description>
   </DataType>
   <DataType SymbolicName="tns:Decimal" PartNo="3" BaseType="tns:Number">
@@ -113,7 +113,7 @@
   <ReferenceType SymbolicName="tns:HierarchicalReferences" PartNo="3" BaseType="tns:References" IsAbstract="true">
     <Description>The abstract base type for all hierarchical references.</Description>
   </ReferenceType>
-  <ReferenceType SymbolicName="tns:HasChild" PartNo="3" BaseType="tns:HierarchicalReferences">
+  <ReferenceType SymbolicName="tns:HasChild" PartNo="3" BaseType="tns:HierarchicalReferences" IsAbstract="true">
     <Description>The abstract base type for all non-looping hierarchical references.</Description>
     <InverseName>ChildOf</InverseName>
   </ReferenceType>
@@ -143,13 +143,13 @@
   </ReferenceType>
   <ReferenceType SymbolicName="tns:GeneratesEvent" PartNo="3" BaseType="tns:NonHierarchicalReferences">
     <Description>The type for references from a node to an event type that is raised by node.</Description>
-    <InverseName>GeneratesEvent</InverseName>
+    <InverseName>GeneratedBy</InverseName>
   </ReferenceType>
   <ReferenceType SymbolicName="tns:AlwaysGeneratesEvent" PartNo="3" BaseType="tns:GeneratesEvent">
     <Description>The type for references from a node to an event type that is always raised by node.</Description>
-    <InverseName>AlwaysGeneratesEvent</InverseName>
+    <InverseName>AlwaysGeneratedBy</InverseName>
   </ReferenceType>
-  <ReferenceType SymbolicName="tns:Aggregates" PartNo="3" BaseType="tns:HasChild">
+  <ReferenceType SymbolicName="tns:Aggregates" PartNo="3" BaseType="tns:HasChild" IsAbstract="true">
     <Description>The type for non-looping hierarchical references that are used to aggregate nodes into complex types.</Description>
     <InverseName>AggregatedBy</InverseName>
   </ReferenceType>
@@ -1178,7 +1178,7 @@
       <Variable SymbolicName="tns:DisabledMonitoredItemCount" DataType="tns:UInt32" />
       <Variable SymbolicName="tns:MonitoringQueueOverflowCount" DataType="tns:UInt32" />
       <Variable SymbolicName="tns:NextSequenceNumber" DataType="tns:UInt32" />
-      <Variable SymbolicName="tns:EventQueueOverFlowCount" DataType="tns:UInt32" />
+      <Variable SymbolicName="tns:EventQueueOverflowCount" DataType="tns:UInt32" />
     </Children>
   </VariableType>
   <VariableType SymbolicName="tns:SessionDiagnosticsArrayType" PartNo="5" BaseType="tns:BaseDataVariableType" DataType="tns:SessionDiagnosticsDataType" ValueRank="Array">
@@ -1644,7 +1644,9 @@
     <Children>
       <Property SymbolicName="tns:Identities" DataType="tns:IdentityMappingRuleType" ValueRank="Array" />
       <Property SymbolicName="tns:Applications" ModellingRule="Optional" DataType="tns:String" ValueRank="Array" />
+      <Property SymbolicName="tns:ApplicationsExclude" ModellingRule="Optional" DataType="tns:Boolean" />
       <Property SymbolicName="tns:Endpoints" ModellingRule="Optional" DataType="tns:String" ValueRank="Array" />
+      <Property SymbolicName="tns:EndpointsExclude" ModellingRule="Optional" DataType="tns:Boolean" />
       <Method SymbolicName="tns:AddIdentity" TypeDefinition="tns:AddIdentityMethodType" ModellingRule="Optional" />
       <Method SymbolicName="tns:RemoveIdentity" TypeDefinition="tns:RemoveIdentityMethodType" ModellingRule="Optional" />
       <Method SymbolicName="tns:AddApplication" TypeDefinition="tns:AddApplicationMethodType" ModellingRule="Optional" />
@@ -1704,6 +1706,18 @@
     <BrowseName>AnonymousRole</BrowseName>
     <DisplayName>Anonymous</DisplayName>
     <Description>The Role has very limited access for use when a Session has anonymous credentials.</Description>
+    <Children>
+      <Property SymbolicName="tns:Applications" />
+      <Property SymbolicName="tns:ApplicationsExclude" />
+      <Property SymbolicName="tns:Endpoints" />
+      <Property SymbolicName="tns:EndpointsExclude" />
+      <Method SymbolicName="tns:AddIdentity" />
+      <Method SymbolicName="tns:RemoveIdentity" />
+      <Method SymbolicName="tns:AddApplication" />
+      <Method SymbolicName="tns:RemoveApplication" />
+      <Method SymbolicName="tns:AddEndpoint" />
+      <Method SymbolicName="tns:RemoveEndpoint" />
+    </Children>
     <References>
       <Reference IsInverse="true">
         <ReferenceType>tns:Organizes</ReferenceType>
@@ -1715,6 +1729,18 @@
     <BrowseName>AuthenticatedUserRole</BrowseName>
     <DisplayName>AuthenticatedUser</DisplayName>
     <Description>The Role has limited access for use when a Session has valid non-anonymous credentials but has not been explicity granted access to a Role.</Description>
+    <Children>
+      <Property SymbolicName="tns:Applications" />
+      <Property SymbolicName="tns:ApplicationsExclude" />
+      <Property SymbolicName="tns:Endpoints" />
+      <Property SymbolicName="tns:EndpointsExclude" />
+      <Method SymbolicName="tns:AddIdentity" />
+      <Method SymbolicName="tns:RemoveIdentity" />
+      <Method SymbolicName="tns:AddApplication" />
+      <Method SymbolicName="tns:RemoveApplication" />
+      <Method SymbolicName="tns:AddEndpoint" />
+      <Method SymbolicName="tns:RemoveEndpoint" />
+    </Children>
     <References>
       <Reference IsInverse="true">
         <ReferenceType>tns:Organizes</ReferenceType>
@@ -1726,6 +1752,18 @@
     <BrowseName>ObserverRole</BrowseName>
     <DisplayName>Observer</DisplayName>
     <Description>The Role is allowed to browse, read live data, read historical data/events or subscribe to data/events.</Description>
+    <Children>
+      <Property SymbolicName="tns:Applications" />
+      <Property SymbolicName="tns:ApplicationsExclude" />
+      <Property SymbolicName="tns:Endpoints" />
+      <Property SymbolicName="tns:EndpointsExclude" />
+      <Method SymbolicName="tns:AddIdentity" />
+      <Method SymbolicName="tns:RemoveIdentity" />
+      <Method SymbolicName="tns:AddApplication" />
+      <Method SymbolicName="tns:RemoveApplication" />
+      <Method SymbolicName="tns:AddEndpoint" />
+      <Method SymbolicName="tns:RemoveEndpoint" />
+    </Children>
     <References>
       <Reference IsInverse="true">
         <ReferenceType>tns:Organizes</ReferenceType>
@@ -1737,6 +1775,18 @@
     <BrowseName>OperatorRole</BrowseName>
     <DisplayName>Operator</DisplayName>
     <Description>The Role is allowed to browse, read live data, read historical data/events or subscribe to data/events.</Description>
+    <Children>
+      <Property SymbolicName="tns:Applications" />
+      <Property SymbolicName="tns:ApplicationsExclude" />
+      <Property SymbolicName="tns:Endpoints" />
+      <Property SymbolicName="tns:EndpointsExclude" />
+      <Method SymbolicName="tns:AddIdentity" />
+      <Method SymbolicName="tns:RemoveIdentity" />
+      <Method SymbolicName="tns:AddApplication" />
+      <Method SymbolicName="tns:RemoveApplication" />
+      <Method SymbolicName="tns:AddEndpoint" />
+      <Method SymbolicName="tns:RemoveEndpoint" />
+    </Children>
     <References>
       <Reference IsInverse="true">
         <ReferenceType>tns:Organizes</ReferenceType>
@@ -1748,6 +1798,18 @@
     <BrowseName>EngineerRole</BrowseName>
     <DisplayName>Engineer</DisplayName>
     <Description>The Role is allowed to browse, read live data, read and update historical data/events, call methods or subscribe to data/events.</Description>
+    <Children>
+      <Property SymbolicName="tns:Applications" />
+      <Property SymbolicName="tns:ApplicationsExclude" />
+      <Property SymbolicName="tns:Endpoints" />
+      <Property SymbolicName="tns:EndpointsExclude" />
+      <Method SymbolicName="tns:AddIdentity" />
+      <Method SymbolicName="tns:RemoveIdentity" />
+      <Method SymbolicName="tns:AddApplication" />
+      <Method SymbolicName="tns:RemoveApplication" />
+      <Method SymbolicName="tns:AddEndpoint" />
+      <Method SymbolicName="tns:RemoveEndpoint" />
+    </Children>
     <References>
       <Reference IsInverse="true">
         <ReferenceType>tns:Organizes</ReferenceType>
@@ -1759,6 +1821,18 @@
     <BrowseName>SupervisorRole</BrowseName>
     <DisplayName>Supervisor</DisplayName>
     <Description>The Role is allowed to browse, read live data, read and historical data/events, call methods or subscribe to data/events.</Description>
+    <Children>
+      <Property SymbolicName="tns:Applications" />
+      <Property SymbolicName="tns:ApplicationsExclude" />
+      <Property SymbolicName="tns:Endpoints" />
+      <Property SymbolicName="tns:EndpointsExclude" />
+      <Method SymbolicName="tns:AddIdentity" />
+      <Method SymbolicName="tns:RemoveIdentity" />
+      <Method SymbolicName="tns:AddApplication" />
+      <Method SymbolicName="tns:RemoveApplication" />
+      <Method SymbolicName="tns:AddEndpoint" />
+      <Method SymbolicName="tns:RemoveEndpoint" />
+    </Children>
     <References>
       <Reference IsInverse="true">
         <ReferenceType>tns:Organizes</ReferenceType>
@@ -1770,6 +1844,18 @@
     <BrowseName>ConfigureAdminRole</BrowseName>
     <DisplayName>ConfigureAdmin</DisplayName>
     <Description>The Role is allowed to change the non-security related configuration settings.</Description>
+    <Children>
+      <Property SymbolicName="tns:Applications" />
+      <Property SymbolicName="tns:ApplicationsExclude" />
+      <Property SymbolicName="tns:Endpoints" />
+      <Property SymbolicName="tns:EndpointsExclude" />
+      <Method SymbolicName="tns:AddIdentity" />
+      <Method SymbolicName="tns:RemoveIdentity" />
+      <Method SymbolicName="tns:AddApplication" />
+      <Method SymbolicName="tns:RemoveApplication" />
+      <Method SymbolicName="tns:AddEndpoint" />
+      <Method SymbolicName="tns:RemoveEndpoint" />
+    </Children>
     <References>
       <Reference IsInverse="true">
         <ReferenceType>tns:Organizes</ReferenceType>
@@ -1781,6 +1867,18 @@
     <BrowseName>SecurityAdminRole</BrowseName>
     <DisplayName>SecurityAdmin</DisplayName>
     <Description>The Role is allowed to change security related settings.</Description>
+    <Children>
+      <Property SymbolicName="tns:Applications" />
+      <Property SymbolicName="tns:ApplicationsExclude" />
+      <Property SymbolicName="tns:Endpoints" />
+      <Property SymbolicName="tns:EndpointsExclude" />
+      <Method SymbolicName="tns:AddIdentity" />
+      <Method SymbolicName="tns:RemoveIdentity" />
+      <Method SymbolicName="tns:AddApplication" />
+      <Method SymbolicName="tns:RemoveApplication" />
+      <Method SymbolicName="tns:AddEndpoint" />
+      <Method SymbolicName="tns:RemoveEndpoint" />
+    </Children>
     <References>
       <Reference IsInverse="true">
         <ReferenceType>tns:Organizes</ReferenceType>
@@ -1824,7 +1922,7 @@
       <Property SymbolicName="tns:EnumStrings" DataType="tns:LocalizedText" ValueRank="Array" />
     </Children>
   </VariableType>
-  <VariableType SymbolicName="tns:MultiStateValueDiscreteType" PartNo="8" BaseType="tns:DiscreteItemType" DataType="tns:Number">
+  <VariableType SymbolicName="tns:MultiStateValueDiscreteType" PartNo="8" BaseType="tns:DiscreteItemType" DataType="tns:Number" ValueRank="ScalarOrArray">
     <Children>
       <Property SymbolicName="tns:EnumValues" DataType="tns:EnumValueType" ValueRank="Array" />
       <Property SymbolicName="tns:ValueAsText" DataType="tns:LocalizedText" />
@@ -2757,15 +2855,15 @@
       <Property SymbolicName="tns:Tolerance" ModellingRule="Optional" DataType="tns:Double" />
     </Children>
   </ObjectType>
-  <ObjectType SymbolicName="tns:BaseConditionClassType" PartNo="9" BaseType="tns:BaseObjectType" />
-  <ObjectType SymbolicName="tns:ProcessConditionClassType" PartNo="9" BaseType="tns:BaseConditionClassType" />
-  <ObjectType SymbolicName="tns:MaintenanceConditionClassType" PartNo="9" BaseType="tns:BaseConditionClassType" />
-  <ObjectType SymbolicName="tns:SystemConditionClassType" PartNo="9" BaseType="tns:BaseConditionClassType" />
-  <ObjectType SymbolicName="tns:SafetyConditionClassType" PartNo="9" BaseType="tns:BaseConditionClassType" />
-  <ObjectType SymbolicName="tns:HighlyManagedAlarmConditionClassType" PartNo="9" BaseType="tns:BaseConditionClassType" />
-  <ObjectType SymbolicName="tns:TrainingConditionClassType" PartNo="9" BaseType="tns:BaseConditionClassType" />
-  <ObjectType SymbolicName="tns:StatisticalConditionClassType" PartNo="9" BaseType="tns:BaseConditionClassType" />
-  <ObjectType SymbolicName="tns:TestingConditionClassType" PartNo="9" BaseType="tns:BaseConditionClassType" />
+  <ObjectType SymbolicName="tns:BaseConditionClassType" PartNo="9" BaseType="tns:BaseObjectType" IsAbstract="true" />
+  <ObjectType SymbolicName="tns:ProcessConditionClassType" PartNo="9" BaseType="tns:BaseConditionClassType" IsAbstract="true" />
+  <ObjectType SymbolicName="tns:MaintenanceConditionClassType" PartNo="9" BaseType="tns:BaseConditionClassType" IsAbstract="true" />
+  <ObjectType SymbolicName="tns:SystemConditionClassType" PartNo="9" BaseType="tns:BaseConditionClassType" IsAbstract="true" />
+  <ObjectType SymbolicName="tns:SafetyConditionClassType" PartNo="9" BaseType="tns:BaseConditionClassType" IsAbstract="true" />
+  <ObjectType SymbolicName="tns:HighlyManagedAlarmConditionClassType" PartNo="9" BaseType="tns:BaseConditionClassType" IsAbstract="true" />
+  <ObjectType SymbolicName="tns:TrainingConditionClassType" PartNo="9" BaseType="tns:BaseConditionClassType" IsAbstract="true" />
+  <ObjectType SymbolicName="tns:StatisticalConditionClassType" PartNo="9" BaseType="tns:BaseConditionClassType" IsAbstract="true" />
+  <ObjectType SymbolicName="tns:TestingConditionClassType" PartNo="9" BaseType="tns:BaseConditionClassType" IsAbstract="true" />
   <ObjectType SymbolicName="tns:AuditConditionEventType" PartNo="9" BaseType="tns:AuditUpdateMethodEventType" />
   <ObjectType SymbolicName="tns:AuditConditionEnableEventType" PartNo="9" BaseType="tns:AuditConditionEventType" />
   <ObjectType SymbolicName="tns:AuditConditionCommentEventType" PartNo="9" BaseType="tns:AuditConditionEventType">
@@ -2800,9 +2898,9 @@
   <ObjectType SymbolicName="tns:AuditConditionSilenceEventType" PartNo="9" BaseType="tns:AuditConditionEventType" />
   <ObjectType SymbolicName="tns:AuditConditionResetEventType" PartNo="9" BaseType="tns:AuditConditionEventType" />
   <ObjectType SymbolicName="tns:AuditConditionOutOfServiceEventType" PartNo="9" BaseType="tns:AuditConditionEventType" />
-  <ObjectType SymbolicName="tns:RefreshStartEventType" PartNo="9" BaseType="tns:SystemEventType" />
-  <ObjectType SymbolicName="tns:RefreshEndEventType" PartNo="9" BaseType="tns:SystemEventType" />
-  <ObjectType SymbolicName="tns:RefreshRequiredEventType" PartNo="9" BaseType="tns:SystemEventType" />
+  <ObjectType SymbolicName="tns:RefreshStartEventType" PartNo="9" BaseType="tns:SystemEventType" IsAbstract="true" />
+  <ObjectType SymbolicName="tns:RefreshEndEventType" PartNo="9" BaseType="tns:SystemEventType" IsAbstract="true" />
+  <ObjectType SymbolicName="tns:RefreshRequiredEventType" PartNo="9" BaseType="tns:SystemEventType" IsAbstract="true" />
   <ReferenceType SymbolicName="tns:HasCondition" PartNo="9" BaseType="tns:NonHierarchicalReferences">
     <InverseName>IsConditionOf</InverseName>
   </ReferenceType>
@@ -2851,20 +2949,30 @@
         </Children>
       </Variable>
       <Property SymbolicName="tns:Creatable" ModellingRule="None" DataType="tns:Boolean" />
-      <Property SymbolicName="tns:Deletable" DataType="tns:Boolean" />
+      <Property SymbolicName="tns:Deletable" ModellingRule="Mandatory" DataType="tns:Boolean" />
       <Property SymbolicName="tns:AutoDelete" ModellingRule="Mandatory" DataType="tns:Boolean" />
-      <Property SymbolicName="tns:RecycleCount" DataType="tns:Int32" />
+      <Property SymbolicName="tns:RecycleCount" ModellingRule="Mandatory" DataType="tns:Int32" />
       <Property SymbolicName="tns:InstanceCount" ModellingRule="None" DataType="tns:UInt32" />
       <Property SymbolicName="tns:MaxInstanceCount" ModellingRule="None" DataType="tns:UInt32" />
       <Property SymbolicName="tns:MaxRecycleCount" ModellingRule="None" DataType="tns:UInt32" />
-      <Variable SymbolicName="tns:ProgramDiagnostics" TypeDefinition="tns:ProgramDiagnosticType" ModellingRule="Optional" />
+      <Variable SymbolicName="tns:ProgramDiagnostics" TypeDefinition="tns:ProgramDiagnostic2Type" ModellingRule="Optional" />
       <Object SymbolicName="tns:FinalResultData" TypeDefinition="tns:BaseObjectType" ModellingRule="Optional" />
+      <Object SymbolicName="tns:Halted" TypeDefinition="tns:StateType" ModellingRule="None">
+        <Description>The Program is in a terminal or failed state, and it cannot be started or resumed without being reset.</Description>
+        <Children>
+          <Property SymbolicName="tns:StateNumber">
+            <DefaultValue>
+              <uax:UInt32>11</uax:UInt32>
+            </DefaultValue>
+          </Property>
+        </Children>
+      </Object>
       <Object SymbolicName="tns:Ready" TypeDefinition="tns:StateType" ModellingRule="None">
         <Description>The Program is properly initialized and may be started.</Description>
         <Children>
           <Property SymbolicName="tns:StateNumber">
             <DefaultValue>
-              <uax:UInt32>1</uax:UInt32>
+              <uax:UInt32>12</uax:UInt32>
             </DefaultValue>
           </Property>
         </Children>
@@ -2874,7 +2982,7 @@
         <Children>
           <Property SymbolicName="tns:StateNumber">
             <DefaultValue>
-              <uax:UInt32>2</uax:UInt32>
+              <uax:UInt32>13</uax:UInt32>
             </DefaultValue>
           </Property>
         </Children>
@@ -2884,17 +2992,7 @@
         <Children>
           <Property SymbolicName="tns:StateNumber">
             <DefaultValue>
-              <uax:UInt32>3</uax:UInt32>
-            </DefaultValue>
-          </Property>
-        </Children>
-      </Object>
-      <Object SymbolicName="tns:Halted" TypeDefinition="tns:StateType" ModellingRule="None">
-        <Description>The Program is in a terminal or failed state, and it cannot be started or resumed without being reset.</Description>
-        <Children>
-          <Property SymbolicName="tns:StateNumber">
-            <DefaultValue>
-              <uax:UInt32>4</uax:UInt32>
+              <uax:UInt32>14</uax:UInt32>
             </DefaultValue>
           </Property>
         </Children>
@@ -3134,19 +3232,19 @@
           </Reference>
         </References>
       </Object>
-      <Method SymbolicName="tns:Start" ModellingRule="Optional">
+      <Method SymbolicName="tns:Start" ModellingRule="OptionalPlaceholder">
         <Description>Causes the Program to transition from the Ready state to the Running state.</Description>
       </Method>
-      <Method SymbolicName="tns:Suspend" ModellingRule="Optional">
+      <Method SymbolicName="tns:Suspend" ModellingRule="OptionalPlaceholder">
         <Description>Causes the Program to transition from the Running state to the Suspended state.</Description>
       </Method>
-      <Method SymbolicName="tns:Resume" ModellingRule="Optional">
+      <Method SymbolicName="tns:Resume" ModellingRule="OptionalPlaceholder">
         <Description>Causes the Program to transition from the Suspended state to the Running state.</Description>
       </Method>
-      <Method SymbolicName="tns:Halt" ModellingRule="Optional">
+      <Method SymbolicName="tns:Halt" ModellingRule="OptionalPlaceholder">
         <Description>Causes the Program to transition from the Ready, Running or Suspended state to the Halted state.</Description>
       </Method>
-      <Method SymbolicName="tns:Reset" ModellingRule="Optional">
+      <Method SymbolicName="tns:Reset" ModellingRule="OptionalPlaceholder">
         <Description>Causes the Program to transition from the Halted state to the Ready state.</Description>
       </Method>
     </Children>
@@ -3176,6 +3274,22 @@
       <Property SymbolicName="tns:LastMethodSessionId" DataType="tns:NodeId" />
       <Property SymbolicName="tns:LastMethodInputArguments" DataType="tns:BaseDataType" ValueRank="Array" />
       <Property SymbolicName="tns:LastMethodOutputArguments" DataType="tns:BaseDataType" ValueRank="Array" />
+      <Property SymbolicName="tns:LastMethodCallTime" DataType="tns:UtcTime" />
+      <Property SymbolicName="tns:LastMethodReturnStatus" DataType="tns:StatusCode" />
+    </Children>
+  </VariableType>
+  <VariableType SymbolicName="tns:ProgramDiagnostic2Type" PartNo="10" BaseType="tns:BaseDataVariableType" DataType="tns:ProgramDiagnostic2DataType" ValueRank="Scalar">
+    <Children>
+      <Property SymbolicName="tns:CreateSessionId" DataType="tns:NodeId" />
+      <Property SymbolicName="tns:CreateClientName" DataType="tns:String" />
+      <Property SymbolicName="tns:InvocationCreationTime" DataType="tns:UtcTime" />
+      <Property SymbolicName="tns:LastTransitionTime" DataType="tns:UtcTime" />
+      <Property SymbolicName="tns:LastMethodCall" DataType="tns:String" />
+      <Property SymbolicName="tns:LastMethodSessionId" DataType="tns:NodeId" />
+      <Property SymbolicName="tns:LastMethodInputArguments" DataType="tns:Argument" ValueRank="Array" />
+      <Property SymbolicName="tns:LastMethodOutputArguments" DataType="tns:Argument" ValueRank="Array" />
+      <Property SymbolicName="tns:LastMethodInputValues" DataType="tns:BaseDataType" ValueRank="Array" />
+      <Property SymbolicName="tns:LastMethodOutputValues" DataType="tns:BaseDataType" ValueRank="Array" />
       <Property SymbolicName="tns:LastMethodCallTime" DataType="tns:UtcTime" />
       <Property SymbolicName="tns:LastMethodReturnStatus" DataType="tns:StatusCode" />
     </Children>
@@ -3702,6 +3816,7 @@
       <Field Name="DataType" DataType="tns:NodeId" />
       <Field Name="ValueRank" DataType="tns:Int32" />
       <Field Name="ArrayDimensions" DataType="tns:UInt32" ValueRank="Array" />
+      <Field Name="MaxStringLength" DataType="tns:UInt32" />
       <Field Name="DataSetFieldId" DataType="tns:Guid" />
       <Field Name="Properties" DataType="tns:KeyValuePair" ValueRank="Array" />
     </Fields>
@@ -4982,7 +5097,7 @@
       </Field>
     </Fields>
   </DataType>
-  <DataType SymbolicName="tns:PermissionType" SymbolicId="tns:PermissionType" PartNo="3" BaseType="tns:UInt32" IsOptionSet="true" NoArraysAllowed="true">
+  <DataType SymbolicName="tns:PermissionType" SymbolicId="tns:PermissionType" PartNo="3" BaseType="tns:UInt16" IsOptionSet="true" NoArraysAllowed="true">
     <Fields>
       <Field Name="None" BitMask="0000" />
       <Field Name="Browse" BitMask="0001" />
@@ -5005,7 +5120,18 @@
       <Field Name="All" BitMask="1FFFF" />
     </Fields>
   </DataType>
-  <DataType SymbolicName="tns:AccessLevelType" SymbolicId="tns:AccessLevelType" PartNo="3" BaseType="tns:UInt32" IsOptionSet="true" NoArraysAllowed="true">
+  <DataType SymbolicName="tns:AccessLevelType" SymbolicId="tns:AccessLevelType" PartNo="3" BaseType="tns:Byte" IsOptionSet="true" NoArraysAllowed="true">
+    <Fields>
+      <Field Name="None" BitMask="0000" />
+      <Field Name="CurrentRead" BitMask="0001" />
+      <Field Name="CurrentWrite" BitMask="0002" />
+      <Field Name="HistoryRead" BitMask="0004" />
+      <Field Name="HistoryWrite" BitMask="0010" />
+      <Field Name="StatusWrite" BitMask="0020" />
+      <Field Name="TimestampWrite" BitMask="0040" />
+    </Fields>
+  </DataType>
+  <DataType SymbolicName="tns:AccessLevelExType" SymbolicId="tns:AccessLevelExType" PartNo="3" BaseType="tns:UInt32" IsOptionSet="true" NoArraysAllowed="true">
     <Fields>
       <Field Name="None" BitMask="0000" />
       <Field Name="CurrentRead" BitMask="0001" />
@@ -5055,6 +5181,8 @@
       <Field Name="Description" DataType="tns:LocalizedText" />
       <Field Name="DataType" DataType="tns:NodeId" />
       <Field Name="ValueRank" DataType="tns:Int32" />
+      <Field Name="ArrayDimensions" DataType="tns:UInt32" ValueRank="Array" />
+      <Field Name="MaxStringLength" DataType="tns:UInt32" />
       <Field Name="IsOptional" DataType="tns:Boolean" />
     </Fields>
   </DataType>
@@ -5858,7 +5986,7 @@
       </Field>
     </Fields>
   </DataType>
-  <DataType SymbolicName="tns:UserIdentityToken" SymbolicId="tns:UserIdentityToken" PartNo="4" BaseType="tns:Structure" NoArraysAllowed="true">
+  <DataType SymbolicName="tns:UserIdentityToken" SymbolicId="tns:UserIdentityToken" PartNo="4" BaseType="tns:Structure" IsAbstract="true" NoArraysAllowed="true">
     <Description>A base type for a user identity token.</Description>
     <Fields>
       <Field Name="PolicyId" DataType="tns:String">
@@ -7854,6 +7982,22 @@
       <Field Name="LastMethodSessionId" DataType="tns:NodeId" />
       <Field Name="LastMethodInputArguments" DataType="tns:Argument" ValueRank="Array" />
       <Field Name="LastMethodOutputArguments" DataType="tns:Argument" ValueRank="Array" />
+      <Field Name="LastMethodCallTime" DataType="tns:UtcTime" />
+      <Field Name="LastMethodReturnStatus" DataType="tns:StatusResult" />
+    </Fields>
+  </DataType>
+  <DataType SymbolicName="tns:ProgramDiagnostic2DataType" SymbolicId="tns:ProgramDiagnostic2DataType" PartNo="10" BaseType="tns:Structure" NoArraysAllowed="true">
+    <Fields>
+      <Field Name="CreateSessionId" DataType="tns:NodeId" />
+      <Field Name="CreateClientName" DataType="tns:String" />
+      <Field Name="InvocationCreationTime" DataType="tns:UtcTime" />
+      <Field Name="LastTransitionTime" DataType="tns:UtcTime" />
+      <Field Name="LastMethodCall" DataType="tns:String" />
+      <Field Name="LastMethodSessionId" DataType="tns:NodeId" />
+      <Field Name="LastMethodInputArguments" DataType="tns:Argument" ValueRank="Array" />
+      <Field Name="LastMethodOutputArguments" DataType="tns:Argument" ValueRank="Array" />
+      <Field Name="LastMethodInputValues" DataType="tns:BaseDataType" ValueRank="Array" />
+      <Field Name="LastMethodOutputValues" DataType="tns:BaseDataType" ValueRank="Array" />
       <Field Name="LastMethodCallTime" DataType="tns:UtcTime" />
       <Field Name="LastMethodReturnStatus" DataType="tns:StatusResult" />
     </Fields>

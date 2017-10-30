@@ -846,7 +846,7 @@
       <opc:Variable SymbolicName="DisabledMonitoredItemCount" DataType="ua:UInt32" />
       <opc:Variable SymbolicName="MonitoringQueueOverflowCount" DataType="ua:UInt32" />
       <opc:Variable SymbolicName="NextSequenceNumber" DataType="ua:UInt32" />
-      <opc:Variable SymbolicName="EventQueueOverFlowCount" DataType="ua:UInt32" />
+      <opc:Variable SymbolicName="EventQueueOverflowCount" DataType="ua:UInt32" />
     </opc:Children>
   </opc:VariableType>
 
@@ -1441,7 +1441,9 @@
     <opc:Children>
       <opc:Property SymbolicName="Identities" DataType="IdentityMappingRuleType" ValueRank="Array"></opc:Property>
       <opc:Property SymbolicName="Applications" DataType="ua:String" ValueRank="Array" ModellingRule="Optional"></opc:Property>
+      <opc:Property SymbolicName="ApplicationsExclude" DataType="ua:Boolean" ModellingRule="Optional"></opc:Property>
       <opc:Property SymbolicName="Endpoints" DataType="ua:String" ValueRank="Array" ModellingRule="Optional"></opc:Property>
+      <opc:Property SymbolicName="EndpointsExclude" DataType="ua:Boolean" ModellingRule="Optional"></opc:Property>
       <opc:Method SymbolicName="AddIdentity" TypeDefinition="AddIdentityMethodType" ModellingRule="Optional" />
       <opc:Method SymbolicName="RemoveIdentity" TypeDefinition="RemoveIdentityMethodType" ModellingRule="Optional" />
       <opc:Method SymbolicName="AddApplication" TypeDefinition="AddApplicationMethodType" ModellingRule="Optional" />
@@ -1511,6 +1513,18 @@
     <opc:BrowseName>AnonymousRole</opc:BrowseName>
     <opc:DisplayName>Anonymous</opc:DisplayName>
     <opc:Description>The Role has very limited access for use when a Session has anonymous credentials.</opc:Description>
+    <opc:Children> 
+      <opc:Property SymbolicName="Applications" />
+      <opc:Property SymbolicName="ApplicationsExclude" />
+      <opc:Property SymbolicName="Endpoints" />
+      <opc:Property SymbolicName="EndpointsExclude" />
+      <opc:Method SymbolicName="AddIdentity" />
+      <opc:Method SymbolicName="RemoveIdentity" />
+      <opc:Method SymbolicName="AddApplication" />
+      <opc:Method SymbolicName="RemoveApplication" />
+      <opc:Method SymbolicName="AddEndpoint" />
+      <opc:Method SymbolicName="RemoveEndpoint" />
+    </opc:Children>
     <opc:References>
       <opc:Reference IsInverse="true">
         <opc:ReferenceType>ua:Organizes</opc:ReferenceType>
@@ -1523,6 +1537,18 @@
     <opc:BrowseName>AuthenticatedUserRole</opc:BrowseName>
     <opc:DisplayName>AuthenticatedUser</opc:DisplayName>
     <opc:Description>The Role has limited access for use when a Session has valid non-anonymous credentials but has not been explicity granted access to a Role.</opc:Description>
+    <opc:Children> 
+      <opc:Property SymbolicName="Applications" />
+      <opc:Property SymbolicName="ApplicationsExclude" />
+      <opc:Property SymbolicName="Endpoints" />
+      <opc:Property SymbolicName="EndpointsExclude" />
+      <opc:Method SymbolicName="AddIdentity" />
+      <opc:Method SymbolicName="RemoveIdentity" />
+      <opc:Method SymbolicName="AddApplication" />
+      <opc:Method SymbolicName="RemoveApplication" />
+      <opc:Method SymbolicName="AddEndpoint" />
+      <opc:Method SymbolicName="RemoveEndpoint" />
+    </opc:Children>
     <opc:References>
       <opc:Reference IsInverse="true">
         <opc:ReferenceType>ua:Organizes</opc:ReferenceType>
@@ -1535,6 +1561,18 @@
     <opc:BrowseName>ObserverRole</opc:BrowseName>
     <opc:DisplayName>Observer</opc:DisplayName>
     <opc:Description>The Role is allowed to browse, read live data, read historical data/events or subscribe to data/events.</opc:Description>
+    <opc:Children> 
+      <opc:Property SymbolicName="Applications" />
+      <opc:Property SymbolicName="ApplicationsExclude" />
+      <opc:Property SymbolicName="Endpoints" />
+      <opc:Property SymbolicName="EndpointsExclude" />
+      <opc:Method SymbolicName="AddIdentity" />
+      <opc:Method SymbolicName="RemoveIdentity" />
+      <opc:Method SymbolicName="AddApplication" />
+      <opc:Method SymbolicName="RemoveApplication" />
+      <opc:Method SymbolicName="AddEndpoint" />
+      <opc:Method SymbolicName="RemoveEndpoint" />
+    </opc:Children>
     <opc:References>
       <opc:Reference IsInverse="true">
         <opc:ReferenceType>ua:Organizes</opc:ReferenceType>
@@ -1547,6 +1585,18 @@
     <opc:BrowseName>OperatorRole</opc:BrowseName>
     <opc:DisplayName>Operator</opc:DisplayName>
     <opc:Description>The Role is allowed to browse, read live data, read historical data/events or subscribe to data/events.</opc:Description>
+    <opc:Children> 
+      <opc:Property SymbolicName="Applications" />
+      <opc:Property SymbolicName="ApplicationsExclude" />
+      <opc:Property SymbolicName="Endpoints" />
+      <opc:Property SymbolicName="EndpointsExclude" />
+      <opc:Method SymbolicName="AddIdentity" />
+      <opc:Method SymbolicName="RemoveIdentity" />
+      <opc:Method SymbolicName="AddApplication" />
+      <opc:Method SymbolicName="RemoveApplication" />
+      <opc:Method SymbolicName="AddEndpoint" />
+      <opc:Method SymbolicName="RemoveEndpoint" />
+    </opc:Children>
     <opc:References>
       <opc:Reference IsInverse="true">
         <opc:ReferenceType>ua:Organizes</opc:ReferenceType>
@@ -1559,6 +1609,18 @@
     <opc:BrowseName>EngineerRole</opc:BrowseName>
     <opc:DisplayName>Engineer</opc:DisplayName>
     <opc:Description>The Role is allowed to browse, read live data, read and update historical data/events, call methods or subscribe to data/events.</opc:Description>
+    <opc:Children> 
+      <opc:Property SymbolicName="Applications" />
+      <opc:Property SymbolicName="ApplicationsExclude" />
+      <opc:Property SymbolicName="Endpoints" />
+      <opc:Property SymbolicName="EndpointsExclude" />
+      <opc:Method SymbolicName="AddIdentity" />
+      <opc:Method SymbolicName="RemoveIdentity" />
+      <opc:Method SymbolicName="AddApplication" />
+      <opc:Method SymbolicName="RemoveApplication" />
+      <opc:Method SymbolicName="AddEndpoint" />
+      <opc:Method SymbolicName="RemoveEndpoint" />
+    </opc:Children>
     <opc:References>
       <opc:Reference IsInverse="true">
         <opc:ReferenceType>ua:Organizes</opc:ReferenceType>
@@ -1571,6 +1633,18 @@
     <opc:BrowseName>SupervisorRole</opc:BrowseName>
     <opc:DisplayName>Supervisor</opc:DisplayName>
     <opc:Description>The Role is allowed to browse, read live data, read and historical data/events, call methods or subscribe to data/events.</opc:Description>
+    <opc:Children> 
+      <opc:Property SymbolicName="Applications" />
+      <opc:Property SymbolicName="ApplicationsExclude" />
+      <opc:Property SymbolicName="Endpoints" />
+      <opc:Property SymbolicName="EndpointsExclude" />
+      <opc:Method SymbolicName="AddIdentity" />
+      <opc:Method SymbolicName="RemoveIdentity" />
+      <opc:Method SymbolicName="AddApplication" />
+      <opc:Method SymbolicName="RemoveApplication" />
+      <opc:Method SymbolicName="AddEndpoint" />
+      <opc:Method SymbolicName="RemoveEndpoint" />
+    </opc:Children>
     <opc:References>
       <opc:Reference IsInverse="true">
         <opc:ReferenceType>ua:Organizes</opc:ReferenceType>
@@ -1583,6 +1657,18 @@
     <opc:BrowseName>ConfigureAdminRole</opc:BrowseName>
     <opc:DisplayName>ConfigureAdmin</opc:DisplayName>
     <opc:Description>The Role is allowed to change the non-security related configuration settings.</opc:Description>
+    <opc:Children> 
+      <opc:Property SymbolicName="Applications" />
+      <opc:Property SymbolicName="ApplicationsExclude" />
+      <opc:Property SymbolicName="Endpoints" />
+      <opc:Property SymbolicName="EndpointsExclude" />
+      <opc:Method SymbolicName="AddIdentity" />
+      <opc:Method SymbolicName="RemoveIdentity" />
+      <opc:Method SymbolicName="AddApplication" />
+      <opc:Method SymbolicName="RemoveApplication" />
+      <opc:Method SymbolicName="AddEndpoint" />
+      <opc:Method SymbolicName="RemoveEndpoint" />
+    </opc:Children>
     <opc:References>
       <opc:Reference IsInverse="true">
         <opc:ReferenceType>ua:Organizes</opc:ReferenceType>
@@ -1595,6 +1681,18 @@
     <opc:BrowseName>SecurityAdminRole</opc:BrowseName>
     <opc:DisplayName>SecurityAdmin</opc:DisplayName>
     <opc:Description>The Role is allowed to change security related settings.</opc:Description>
+    <opc:Children> 
+      <opc:Property SymbolicName="Applications" />
+      <opc:Property SymbolicName="ApplicationsExclude" />
+      <opc:Property SymbolicName="Endpoints" />
+      <opc:Property SymbolicName="EndpointsExclude" />
+      <opc:Method SymbolicName="AddIdentity" />
+      <opc:Method SymbolicName="RemoveIdentity" />
+      <opc:Method SymbolicName="AddApplication" />
+      <opc:Method SymbolicName="RemoveApplication" />
+      <opc:Method SymbolicName="AddEndpoint" />
+      <opc:Method SymbolicName="RemoveEndpoint" />
+    </opc:Children>
     <opc:References>
       <opc:Reference IsInverse="true">
         <opc:ReferenceType>ua:Organizes</opc:ReferenceType>
@@ -1646,7 +1744,7 @@
     </opc:Children>
   </opc:VariableType>
 
-  <opc:VariableType SymbolicName="MultiStateValueDiscreteType" BaseType="DiscreteItemType" DataType="ua:Number" PartNo="8">
+  <opc:VariableType SymbolicName="MultiStateValueDiscreteType" BaseType="DiscreteItemType" DataType="ua:Number" ValueRank="ScalarOrArray" PartNo="8">
     <opc:Children>
       <opc:Property SymbolicName="EnumValues" DataType="EnumValueType" ValueRank="Array" />
       <opc:Property SymbolicName="ValueAsText" DataType="ua:LocalizedText" />
@@ -2629,15 +2727,15 @@
     </opc:Children>
   </opc:ObjectType>
 
-  <opc:ObjectType SymbolicName="BaseConditionClassType" BaseType="ua:BaseObjectType" PartNo="9" />
-  <opc:ObjectType SymbolicName="ProcessConditionClassType" BaseType="BaseConditionClassType" PartNo="9" />
-  <opc:ObjectType SymbolicName="MaintenanceConditionClassType" BaseType="BaseConditionClassType" PartNo="9" />
-  <opc:ObjectType SymbolicName="SystemConditionClassType" BaseType="BaseConditionClassType" PartNo="9" />
-  <opc:ObjectType SymbolicName="SafetyConditionClassType" BaseType="BaseConditionClassType" PartNo="9" />
-  <opc:ObjectType SymbolicName="HighlyManagedAlarmConditionClassType" BaseType="BaseConditionClassType" PartNo="9" />
-  <opc:ObjectType SymbolicName="TrainingConditionClassType" BaseType="BaseConditionClassType" PartNo="9" />
-  <opc:ObjectType SymbolicName="StatisticalConditionClassType" BaseType="BaseConditionClassType" PartNo="9" />
-  <opc:ObjectType SymbolicName="TestingConditionClassType" BaseType="BaseConditionClassType" PartNo="9" />
+  <opc:ObjectType SymbolicName="BaseConditionClassType" BaseType="ua:BaseObjectType" IsAbstract="true" PartNo="9" />
+  <opc:ObjectType SymbolicName="ProcessConditionClassType" BaseType="BaseConditionClassType" IsAbstract="true" PartNo="9" />
+  <opc:ObjectType SymbolicName="MaintenanceConditionClassType" BaseType="BaseConditionClassType" IsAbstract="true" PartNo="9" />
+  <opc:ObjectType SymbolicName="SystemConditionClassType" BaseType="BaseConditionClassType" IsAbstract="true" PartNo="9" />
+  <opc:ObjectType SymbolicName="SafetyConditionClassType" BaseType="BaseConditionClassType" IsAbstract="true" PartNo="9" />
+  <opc:ObjectType SymbolicName="HighlyManagedAlarmConditionClassType" BaseType="BaseConditionClassType" IsAbstract="true" PartNo="9" />
+  <opc:ObjectType SymbolicName="TrainingConditionClassType" BaseType="BaseConditionClassType" IsAbstract="true" PartNo="9" />
+  <opc:ObjectType SymbolicName="StatisticalConditionClassType" BaseType="BaseConditionClassType" IsAbstract="true" PartNo="9" />
+  <opc:ObjectType SymbolicName="TestingConditionClassType" BaseType="BaseConditionClassType" IsAbstract="true" PartNo="9" />
   
   <opc:ObjectType SymbolicName="AuditConditionEventType" BaseType="AuditUpdateMethodEventType" PartNo="9" />
   <opc:ObjectType SymbolicName="AuditConditionEnableEventType" BaseType="AuditConditionEventType" PartNo="9" />
@@ -2680,9 +2778,9 @@
   <opc:ObjectType SymbolicName="AuditConditionResetEventType" BaseType="AuditConditionEventType" PartNo="9" />
   <opc:ObjectType SymbolicName="AuditConditionOutOfServiceEventType" BaseType="AuditConditionEventType" PartNo="9" />
 
-  <opc:ObjectType SymbolicName="RefreshStartEventType" BaseType="SystemEventType" PartNo="9" />
-  <opc:ObjectType SymbolicName="RefreshEndEventType" BaseType="SystemEventType" PartNo="9" />
-  <opc:ObjectType SymbolicName="RefreshRequiredEventType" BaseType="SystemEventType" PartNo="9" />
+  <opc:ObjectType SymbolicName="RefreshStartEventType" BaseType="SystemEventType" IsAbstract="true" PartNo="9" />
+  <opc:ObjectType SymbolicName="RefreshEndEventType" BaseType="SystemEventType" IsAbstract="true" PartNo="9" />
+  <opc:ObjectType SymbolicName="RefreshRequiredEventType" BaseType="SystemEventType" IsAbstract="true" PartNo="9" />
 
   <opc:ReferenceType SymbolicName="HasCondition" BaseType="ua:NonHierarchicalReferences" PartNo="9">
     <opc:InverseName>IsConditionOf</opc:InverseName>
@@ -2742,21 +2840,31 @@
       </opc:Variable>
 
       <opc:Property SymbolicName="Creatable" DataType="ua:Boolean" ModellingRule="None" />
-      <opc:Property SymbolicName="Deletable" DataType="ua:Boolean" />
+      <opc:Property SymbolicName="Deletable" DataType="ua:Boolean" ModellingRule="Mandatory" />
       <opc:Property SymbolicName="AutoDelete" DataType="ua:Boolean" ModellingRule="Mandatory" />
-      <opc:Property SymbolicName="RecycleCount" DataType="ua:Int32" />
+      <opc:Property SymbolicName="RecycleCount" DataType="ua:Int32" ModellingRule="Mandatory" />
       <opc:Property SymbolicName="InstanceCount" DataType="ua:UInt32" ModellingRule="None" />
       <opc:Property SymbolicName="MaxInstanceCount" DataType="ua:UInt32" ModellingRule="None" />
       <opc:Property SymbolicName="MaxRecycleCount" DataType="ua:UInt32" ModellingRule="None" />
-      <opc:Variable SymbolicName="ProgramDiagnostics" TypeDefinition="ProgramDiagnosticType" ModellingRule="Optional" />
+      <opc:Variable SymbolicName="ProgramDiagnostics" TypeDefinition="ProgramDiagnostic2Type" ModellingRule="Optional" />
       <opc:Object SymbolicName="FinalResultData" TypeDefinition="BaseObjectType" ModellingRule="Optional" />
 
+      <opc:Object SymbolicName="Halted" TypeDefinition="StateType" ModellingRule="None">
+        <opc:Description>The Program is in a terminal or failed state, and it cannot be started or resumed without being reset.</opc:Description>
+        <opc:Children>
+          <opc:Property SymbolicName="StateNumber">
+            <opc:DefaultValue>
+              <uax:UInt32>11</uax:UInt32>
+            </opc:DefaultValue>
+          </opc:Property>
+        </opc:Children>
+      </opc:Object>
       <opc:Object SymbolicName="Ready" TypeDefinition="StateType" ModellingRule="None">
         <opc:Description>The Program is properly initialized and may be started.</opc:Description>
         <opc:Children>
           <opc:Property SymbolicName="StateNumber">
             <opc:DefaultValue>
-              <uax:UInt32>1</uax:UInt32>
+              <uax:UInt32>12</uax:UInt32>
             </opc:DefaultValue>
           </opc:Property>
         </opc:Children>
@@ -2766,7 +2874,7 @@
         <opc:Children>
           <opc:Property SymbolicName="StateNumber">
             <opc:DefaultValue>
-              <uax:UInt32>2</uax:UInt32>
+              <uax:UInt32>13</uax:UInt32>
             </opc:DefaultValue>
           </opc:Property>
         </opc:Children>
@@ -2776,17 +2884,7 @@
         <opc:Children>
           <opc:Property SymbolicName="StateNumber">
             <opc:DefaultValue>
-              <uax:UInt32>3</uax:UInt32>
-            </opc:DefaultValue>
-          </opc:Property>
-        </opc:Children>
-      </opc:Object>
-      <opc:Object SymbolicName="Halted" TypeDefinition="StateType" ModellingRule="None">
-        <opc:Description>The Program is in a terminal or failed state, and it cannot be started or resumed without being reset.</opc:Description>
-        <opc:Children>
-          <opc:Property SymbolicName="StateNumber">
-            <opc:DefaultValue>
-              <uax:UInt32>4</uax:UInt32>
+              <uax:UInt32>14</uax:UInt32>
             </opc:DefaultValue>
           </opc:Property>
         </opc:Children>
@@ -3026,19 +3124,19 @@
           </opc:Reference>
         </opc:References>
       </opc:Object>
-      <opc:Method SymbolicName="Start" ModellingRule="Optional">
+      <opc:Method SymbolicName="Start" ModellingRule="OptionalPlaceholder">
         <opc:Description>Causes the Program to transition from the Ready state to the Running state.</opc:Description>
       </opc:Method>
-      <opc:Method SymbolicName="Suspend" ModellingRule="Optional">
+      <opc:Method SymbolicName="Suspend" ModellingRule="OptionalPlaceholder">
         <opc:Description>Causes the Program to transition from the Running state to the Suspended state.</opc:Description>
       </opc:Method>
-      <opc:Method SymbolicName="Resume" ModellingRule="Optional">
+      <opc:Method SymbolicName="Resume" ModellingRule="OptionalPlaceholder">
         <opc:Description>Causes the Program to transition from the Suspended state to the Running state.</opc:Description>
       </opc:Method>
-      <opc:Method SymbolicName="Halt" ModellingRule="Optional">
+      <opc:Method SymbolicName="Halt" ModellingRule="OptionalPlaceholder">
         <opc:Description>Causes the Program to transition from the Ready, Running or Suspended state to the Halted state.</opc:Description>
       </opc:Method>
-      <opc:Method SymbolicName="Reset" ModellingRule="Optional">
+      <opc:Method SymbolicName="Reset" ModellingRule="OptionalPlaceholder">
         <opc:Description>Causes the Program to transition from the Halted state to the Ready state.</opc:Description>
       </opc:Method>
     </opc:Children>
@@ -3072,6 +3170,23 @@
       <opc:Property SymbolicName="LastMethodSessionId" DataType="ua:NodeId" />
       <opc:Property SymbolicName="LastMethodInputArguments" DataType="ua:BaseDataType" ValueRank="Array" />
       <opc:Property SymbolicName="LastMethodOutputArguments" DataType="ua:BaseDataType" ValueRank="Array" />
+      <opc:Property SymbolicName="LastMethodCallTime" DataType="ua:UtcTime" />
+      <opc:Property SymbolicName="LastMethodReturnStatus" DataType="ua:StatusCode" />
+    </opc:Children>
+  </opc:VariableType>
+
+  <opc:VariableType SymbolicName="ProgramDiagnostic2Type" DataType="ProgramDiagnostic2DataType" ValueRank="Scalar" BaseType="ua:BaseDataVariableType" PartNo="10">
+    <opc:Children>
+      <opc:Property SymbolicName="CreateSessionId" DataType="ua:NodeId" />
+      <opc:Property SymbolicName="CreateClientName" DataType="ua:String" />
+      <opc:Property SymbolicName="InvocationCreationTime" DataType="ua:UtcTime" />
+      <opc:Property SymbolicName="LastTransitionTime" DataType="ua:UtcTime" />
+      <opc:Property SymbolicName="LastMethodCall" DataType="ua:String" />
+      <opc:Property SymbolicName="LastMethodSessionId" DataType="ua:NodeId" />
+      <opc:Property SymbolicName="LastMethodInputArguments" DataType="Argument" ValueRank="Array" />
+      <opc:Property SymbolicName="LastMethodOutputArguments" DataType="Argument" ValueRank="Array" />
+      <opc:Property SymbolicName="LastMethodInputValues" DataType="ua:BaseDataType" ValueRank="Array" />
+      <opc:Property SymbolicName="LastMethodOutputValues" DataType="ua:BaseDataType" ValueRank="Array" />
       <opc:Property SymbolicName="LastMethodCallTime" DataType="ua:UtcTime" />
       <opc:Property SymbolicName="LastMethodReturnStatus" DataType="ua:StatusCode" />
     </opc:Children>
@@ -3694,6 +3809,7 @@
       <opc:Field Name="DataType"  DataType="ua:NodeId" ValueRank="Scalar"></opc:Field>
       <opc:Field Name="ValueRank"  DataType="ua:Int32" ValueRank="Scalar"></opc:Field>
       <opc:Field Name="ArrayDimensions"  DataType="ua:UInt32" ValueRank="Array"></opc:Field>
+      <opc:Field Name="MaxStringLength"  DataType="ua:UInt32" ValueRank="Scalar"></opc:Field>
       <opc:Field Name="DataSetFieldId"  DataType="ua:Guid" ValueRank="Scalar"></opc:Field>
       <opc:Field Name="Properties"  DataType="KeyValuePair" ValueRank="Array"></opc:Field>      
     </opc:Fields>
@@ -5017,5 +5133,5 @@
       <opc:Property SymbolicName="DataSetWriterId" DataType="ua:UInt16" ModellingRule="Mandatory" />
     </opc:Children>
   </opc:ObjectType>
-  
+
 </opc:ModelDesign>
