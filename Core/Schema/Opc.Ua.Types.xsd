@@ -1,33 +1,3 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<!--
- * Copyright (c) 2005-2018 The OPC Foundation, Inc. All rights reserved.
- *
- * OPC Foundation MIT License 1.00
- * 
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following
- * conditions:
- * 
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- *
- * The complete license agreement can be found here:
- * http://opcfoundation.org/License/MIT/1.00/
--->
-
 <xs:schema
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:ua="http://opcfoundation.org/UA/2008/02/Types.xsd"
@@ -536,6 +506,23 @@
   </xs:complexType>
   <xs:element name="ListOfKeyValuePair" type="tns:ListOfKeyValuePair" nillable="true"></xs:element>
 
+  <xs:complexType name="EndpointType">
+    <xs:sequence>
+      <xs:element name="EndpointUrl" type="xs:string" minOccurs="0" nillable="true" />
+      <xs:element name="SecurityMode" type="tns:MessageSecurityMode" minOccurs="0" />
+      <xs:element name="SecurityPolicyUri" type="xs:string" minOccurs="0" nillable="true" />
+      <xs:element name="TransportProfileUri" type="xs:string" minOccurs="0" nillable="true" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="EndpointType" type="tns:EndpointType" />
+
+  <xs:complexType name="ListOfEndpointType">
+    <xs:sequence>
+      <xs:element name="EndpointType" type="tns:EndpointType" minOccurs="0" maxOccurs="unbounded" nillable="true" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ListOfEndpointType" type="tns:ListOfEndpointType" nillable="true"></xs:element>
+
   <xs:simpleType  name="OpenFileMode">
     <xs:restriction base="xs:string">
       <xs:enumeration value="Read_1" />
@@ -557,7 +544,7 @@
     <xs:restriction base="xs:string">
       <xs:enumeration value="UserName_1" />
       <xs:enumeration value="Thumbprint_2" />
-      <xs:enumeration value="Scope_3" />
+      <xs:enumeration value="Role_3" />
       <xs:enumeration value="GroupId_4" />
       <xs:enumeration value="Anonymous_5" />
       <xs:enumeration value="AuthenticatedUser_6" />
@@ -625,57 +612,6 @@
   </xs:complexType>
   <xs:element name="DecimalDataType" type="tns:DecimalDataType" />
 
-  <xs:complexType name="DataTypeDescription">
-    <xs:sequence>
-      <xs:element name="DataTypeId" type="ua:NodeId" minOccurs="0" nillable="true" />
-      <xs:element name="Name" type="ua:QualifiedName" minOccurs="0" nillable="true" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="DataTypeDescription" type="tns:DataTypeDescription" />
-
-  <xs:complexType name="ListOfDataTypeDescription">
-    <xs:sequence>
-      <xs:element name="DataTypeDescription" type="tns:DataTypeDescription" minOccurs="0" maxOccurs="unbounded" nillable="true" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="ListOfDataTypeDescription" type="tns:ListOfDataTypeDescription" nillable="true"></xs:element>
-
-  <xs:complexType name="StructureDescription">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:DataTypeDescription">
-        <xs:sequence>
-          <xs:element name="StructureDefinition" type="tns:StructureDefinition" minOccurs="0" nillable="true" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="StructureDescription" type="tns:StructureDescription" />
-
-  <xs:complexType name="ListOfStructureDescription">
-    <xs:sequence>
-      <xs:element name="StructureDescription" type="tns:StructureDescription" minOccurs="0" maxOccurs="unbounded" nillable="true" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="ListOfStructureDescription" type="tns:ListOfStructureDescription" nillable="true"></xs:element>
-
-  <xs:complexType name="EnumDescription">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:DataTypeDescription">
-        <xs:sequence>
-          <xs:element name="EnumDefinition" type="tns:EnumDefinition" minOccurs="0" nillable="true" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="EnumDescription" type="tns:EnumDescription" />
-
-  <xs:complexType name="ListOfEnumDescription">
-    <xs:sequence>
-      <xs:element name="EnumDescription" type="tns:EnumDescription" minOccurs="0" maxOccurs="unbounded" nillable="true" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="ListOfEnumDescription" type="tns:ListOfEnumDescription" nillable="true"></xs:element>
-
   <xs:simpleType  name="IdType">
     <xs:annotation>
       <xs:documentation>The type of identifier used in a node id.</xs:documentation>
@@ -715,40 +651,19 @@
   <xs:element name="NodeClass" type="tns:NodeClass" />
 
   <xs:simpleType  name="AccessLevelType">
-    <xs:restriction base="xs:string">
-      <xs:element name="None" type="ua:Variant" minOccurs="0" />
-      <xs:element name="CurrentRead" type="ua:Variant" minOccurs="0" />
-      <xs:element name="CurrentWrite" type="ua:Variant" minOccurs="0" />
-      <xs:element name="HistoryRead" type="ua:Variant" minOccurs="0" />
-      <xs:element name="HistoryWrite" type="ua:Variant" minOccurs="0" />
-      <xs:element name="StatusWrite" type="ua:Variant" minOccurs="0" />
-      <xs:element name="TimestampWrite" type="ua:Variant" minOccurs="0" />
+    <xs:restriction base="xs:unsignedByte">
     </xs:restriction>
   </xs:simpleType>
   <xs:element name="AccessLevelType" type="tns:AccessLevelType" />
 
   <xs:simpleType  name="AccessLevelExType">
-    <xs:restriction base="xs:string">
-      <xs:element name="None" type="ua:Variant" minOccurs="0" />
-      <xs:element name="CurrentRead" type="ua:Variant" minOccurs="0" />
-      <xs:element name="CurrentWrite" type="ua:Variant" minOccurs="0" />
-      <xs:element name="HistoryRead" type="ua:Variant" minOccurs="0" />
-      <xs:element name="HistoryWrite" type="ua:Variant" minOccurs="0" />
-      <xs:element name="StatusWrite" type="ua:Variant" minOccurs="0" />
-      <xs:element name="TimestampWrite" type="ua:Variant" minOccurs="0" />
-      <xs:element name="NonatomicRead" type="ua:Variant" minOccurs="0" />
-      <xs:element name="NonatomicWrite" type="ua:Variant" minOccurs="0" />
-      <xs:element name="WriteFullArrayOnly" type="ua:Variant" minOccurs="0" />
+    <xs:restriction base="xs:unsignedInt">
     </xs:restriction>
   </xs:simpleType>
   <xs:element name="AccessLevelExType" type="tns:AccessLevelExType" />
 
   <xs:simpleType  name="EventNotifierType">
-    <xs:restriction base="xs:string">
-      <xs:element name="None" type="ua:Variant" minOccurs="0" />
-      <xs:element name="SubscribeToEvents" type="ua:Variant" minOccurs="0" />
-      <xs:element name="HistoryRead" type="ua:Variant" minOccurs="0" />
-      <xs:element name="HistoryWrite" type="ua:Variant" minOccurs="0" />
+    <xs:restriction base="xs:unsignedInt">
     </xs:restriction>
   </xs:simpleType>
   <xs:element name="EventNotifierType" type="tns:EventNotifierType" />
@@ -767,6 +682,19 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="ListOfRolePermissionType" type="tns:ListOfRolePermissionType" nillable="true"></xs:element>
+
+  <xs:complexType name="DataTypeDefinition">
+    <xs:sequence>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="DataTypeDefinition" type="tns:DataTypeDefinition" />
+
+  <xs:complexType name="ListOfDataTypeDefinition">
+    <xs:sequence>
+      <xs:element name="DataTypeDefinition" type="tns:DataTypeDefinition" minOccurs="0" maxOccurs="unbounded" nillable="true" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ListOfDataTypeDefinition" type="tns:ListOfDataTypeDefinition" nillable="true"></xs:element>
 
   <xs:simpleType  name="StructureType">
     <xs:restriction base="xs:string">
@@ -811,6 +739,13 @@
   </xs:complexType>
   <xs:element name="StructureDefinition" type="tns:StructureDefinition" />
 
+  <xs:complexType name="ListOfStructureDefinition">
+    <xs:sequence>
+      <xs:element name="StructureDefinition" type="tns:StructureDefinition" minOccurs="0" maxOccurs="unbounded" nillable="true" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ListOfStructureDefinition" type="tns:ListOfStructureDefinition" nillable="true"></xs:element>
+
   <xs:complexType name="EnumDefinition">
     <xs:complexContent mixed="false">
       <xs:extension base="tns:DataTypeDefinition">
@@ -821,6 +756,13 @@
     </xs:complexContent>
   </xs:complexType>
   <xs:element name="EnumDefinition" type="tns:EnumDefinition" />
+
+  <xs:complexType name="ListOfEnumDefinition">
+    <xs:sequence>
+      <xs:element name="EnumDefinition" type="tns:EnumDefinition" minOccurs="0" maxOccurs="unbounded" nillable="true" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ListOfEnumDefinition" type="tns:ListOfEnumDefinition" nillable="true"></xs:element>
 
   <xs:complexType name="Node">
     <xs:annotation>
@@ -2167,34 +2109,7 @@
     <xs:annotation>
       <xs:documentation>Define bits used to indicate which attributes are writable.</xs:documentation>
     </xs:annotation>
-    <xs:restriction base="xs:string">
-      <xs:element name="None" type="ua:Variant" minOccurs="0" />
-      <xs:element name="AccessLevel" type="ua:Variant" minOccurs="0" />
-      <xs:element name="ArrayDimensions" type="ua:Variant" minOccurs="0" />
-      <xs:element name="BrowseName" type="ua:Variant" minOccurs="0" />
-      <xs:element name="ContainsNoLoops" type="ua:Variant" minOccurs="0" />
-      <xs:element name="DataType" type="ua:Variant" minOccurs="0" />
-      <xs:element name="Description" type="ua:Variant" minOccurs="0" />
-      <xs:element name="DisplayName" type="ua:Variant" minOccurs="0" />
-      <xs:element name="EventNotifier" type="ua:Variant" minOccurs="0" />
-      <xs:element name="Executable" type="ua:Variant" minOccurs="0" />
-      <xs:element name="Historizing" type="ua:Variant" minOccurs="0" />
-      <xs:element name="InverseName" type="ua:Variant" minOccurs="0" />
-      <xs:element name="IsAbstract" type="ua:Variant" minOccurs="0" />
-      <xs:element name="MinimumSamplingInterval" type="ua:Variant" minOccurs="0" />
-      <xs:element name="NodeClass" type="ua:Variant" minOccurs="0" />
-      <xs:element name="NodeId" type="ua:Variant" minOccurs="0" />
-      <xs:element name="Symmetric" type="ua:Variant" minOccurs="0" />
-      <xs:element name="UserAccessLevel" type="ua:Variant" minOccurs="0" />
-      <xs:element name="UserExecutable" type="ua:Variant" minOccurs="0" />
-      <xs:element name="UserWriteMask" type="ua:Variant" minOccurs="0" />
-      <xs:element name="ValueRank" type="ua:Variant" minOccurs="0" />
-      <xs:element name="WriteMask" type="ua:Variant" minOccurs="0" />
-      <xs:element name="ValueForVariableType" type="ua:Variant" minOccurs="0" />
-      <xs:element name="DataTypeDefinition" type="ua:Variant" minOccurs="0" />
-      <xs:element name="RolePermissions" type="ua:Variant" minOccurs="0" />
-      <xs:element name="AccessRestrictions" type="ua:Variant" minOccurs="0" />
-      <xs:element name="AccessLevelEx" type="ua:Variant" minOccurs="0" />
+    <xs:restriction base="xs:unsignedInt">
     </xs:restriction>
   </xs:simpleType>
   <xs:element name="AttributeWriteMask" type="tns:AttributeWriteMask" />
