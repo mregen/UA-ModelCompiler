@@ -21,6 +21,7 @@ public IServiceResponse _NAME_(IServiceRequest incoming)
         response = new _NAME_Response();
 
         InvokeService();
+
         // SetResponseParameters
     }
     finally
@@ -31,7 +32,7 @@ public IServiceResponse _NAME_(IServiceRequest incoming)
     return response;
 }
 
-#if OPCUA_USE_SYNCHRONOUS_ENDPOINTS
+#if (OPCUA_USE_SYNCHRONOUS_ENDPOINTS)
 /// <summary>
 /// The operation contract for the _NAME_ service.
 /// </summary>
@@ -41,10 +42,14 @@ public virtual _NAME_ResponseMessage _NAME_(_NAME_Message request)
 
     try
     {
+        // check for bad data.
+        if (message == null) throw new ArgumentNullException("message");
+
         // OnRequestReceived(message._NAME_Request);
 
         SetRequestContext(RequestEncoding.Xml);
         response = (_NAME_Response)_NAME_(request._NAME_Request);
+
         // OnResponseSent(response);
         return new _NAME_ResponseMessage(response);
     }
@@ -55,7 +60,32 @@ public virtual _NAME_ResponseMessage _NAME_(_NAME_Message request)
         throw fault;
     }
 }
-#else
+#endif
+
+#if (NET_STANDARD)
+/// <summary>
+/// Asynchronously calls the _NAME_ service.
+/// </summary>
+public virtual System.Threading.Tasks.Task<_NAME_ResponseMessage> _NAME_Async(_NAME_Message message)
+{
+    var tcs = new System.Threading.Tasks.TaskCompletionSource<_NAME_ResponseMessage>();
+    Begin_NAME_(message, 
+        new AsyncCallback((result) => 
+        {
+            var completion = (System.Threading.Tasks.TaskCompletionSource<_NAME_ResponseMessage>)result.AsyncState;
+            try 
+            {
+                completion.SetResult(End_NAME_(result));
+            }
+            catch(Exception ex)
+            {
+                completion.SetException(ex);
+            }
+        }), tcs);
+    return tcs.Task;
+}
+#endif
+
 /// <summary>
 /// Asynchronously calls the _NAME_ service.
 /// </summary>
@@ -63,10 +93,10 @@ public virtual IAsyncResult Begin_NAME_(_NAME_Message message, AsyncCallback cal
 {
     try
     {
-        OnRequestReceived(message._NAME_Request);
-
         // check for bad data.
         if (message == null) throw new ArgumentNullException("message");
+
+        OnRequestReceived(message._NAME_Request);
 
         // set the request context.
         SetRequestContext(RequestEncoding.Xml);
@@ -101,7 +131,6 @@ public virtual _NAME_ResponseMessage End_NAME_(IAsyncResult ar)
         throw fault;
     }
 }
-#endif
 #endif
 #endregion
 // ***END***
