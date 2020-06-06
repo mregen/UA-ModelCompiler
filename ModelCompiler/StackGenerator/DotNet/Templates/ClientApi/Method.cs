@@ -52,7 +52,7 @@ void SyncCall()
     return response.ResponseHeader;
 }
 
-#if (OPCUA_ASYNC_TASK || NET_STANDARD)
+#if (NET_STANDARD_ASYNC)
 /// <summary>
 /// Invokes the _NAME_ service using async Task based request.
 /// </summary>
@@ -81,9 +81,9 @@ void AsyncCall()
         }
         else
         {
-            _NAME_ResponseMessage responseMessage = await System.Threading.Tasks.Task.Factory.FromAsync(
+            _NAME_ResponseMessage responseMessage = await Task.Factory.FromAsync(
                 InnerChannel.Begin_NAME_, InnerChannel.End_NAME_, new _NAME_Message(request), 
-                null, System.Threading.Tasks.TaskCreationOptions.None).ConfigureAwait(false);
+                null, TaskCreationOptions.None).ConfigureAwait(false);
 
             if (responseMessage == null || responseMessage._NAME_Response == null)
             {

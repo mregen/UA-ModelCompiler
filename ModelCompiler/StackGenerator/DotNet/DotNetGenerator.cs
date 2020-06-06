@@ -723,7 +723,7 @@ namespace Opc.Ua.CodeGenerator
 
             CollectParameters(serviceType.Request, false, types, names, ref length);
 
-            string tokenType = "System.Threading.CancellationToken";
+            string tokenType = "CancellationToken";
             if (tokenType.Length > length)
             {
                 length = tokenType.Length;
@@ -741,7 +741,7 @@ namespace Opc.Ua.CodeGenerator
                 template.Write("public virtual async ");
             }
 
-            template.Write("System.Threading.Tasks.Task<{0}Response> {1}Async(", serviceType.Name, serviceType.Name);
+            template.Write("Task<{0}Response> {1}Async(", serviceType.Name, serviceType.Name);
 
             WriteParameters(template, context, types, names, length);
 

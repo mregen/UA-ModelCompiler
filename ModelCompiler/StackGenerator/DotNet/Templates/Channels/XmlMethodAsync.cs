@@ -26,15 +26,15 @@ public _NAME_ResponseMessage _NAME_(_NAME_Message request)
     }
 }
 
-#if (OPCUA_ASYNC_TASK || NET_STANDARD)
+#if (NET_STANDARD_ASYNC)
 /// <summary>
-/// The client side implementation of the _NAME_ service contract.
+/// The async client side implementation of the _NAME_ service contract.
 /// </summary>
-public async System.Threading.Tasks.Task<_NAME_ResponseMessage> _NAME_Async(_NAME_Message request)
+public Task<_NAME_ResponseMessage> _NAME_Async(_NAME_Message request)
 {
     try
     {
-        return await this.Channel._NAME_Async(request).ConfigureAwait(false);
+        return this.Channel._NAME_Async(request);
     }
     catch (FaultException<ServiceFault> e)
     {

@@ -42,9 +42,6 @@ public virtual _NAME_ResponseMessage _NAME_(_NAME_Message request)
 
     try
     {
-        // check for bad data.
-        if (message == null) throw new ArgumentNullException("message");
-
         // OnRequestReceived(message._NAME_Request);
 
         SetRequestContext(RequestEncoding.Xml);
@@ -60,15 +57,15 @@ public virtual _NAME_ResponseMessage _NAME_(_NAME_Message request)
         throw fault;
     }
 }
-#endif
+#else
 
-#if (NET_STANDARD)
+#if (NET_STANDARD_ASYNC)
 /// <summary>
 /// Asynchronously calls the _NAME_ service.
 /// </summary>
-public virtual System.Threading.Tasks.Task<_NAME_ResponseMessage> _NAME_Async(_NAME_Message message)
+public virtual Task<_NAME_ResponseMessage> _NAME_Async(_NAME_Message message)
 {
-    var tcs = new System.Threading.Tasks.TaskCompletionSource<_NAME_ResponseMessage>();
+    var tcs = new TaskCompletionSource<_NAME_ResponseMessage>();
     Begin_NAME_(message, 
         new AsyncCallback((result) => 
         {
@@ -94,7 +91,7 @@ public virtual IAsyncResult Begin_NAME_(_NAME_Message message, AsyncCallback cal
     try
     {
         // check for bad data.
-        if (message == null) throw new ArgumentNullException("message");
+        if (message == null) throw new ArgumentNullException(nameof(message));
 
         OnRequestReceived(message._NAME_Request);
 
@@ -132,6 +129,7 @@ public virtual _NAME_ResponseMessage End_NAME_(IAsyncResult ar)
     }
 }
 #endif
+#endif
 #endregion
-// ***END***
+    // ***END***
 }
