@@ -8,7 +8,7 @@ REM ** --
 REM ****************************************************************************************************************
 SETLOCAL
 
-set MODELCOMPILER=.\Bin\Release\Opc.Ua.ModelCompiler.exe
+set MODELCOMPILER=.\Bin\Debug\Opc.Ua.ModelCompiler.exe
 set OUTPUT=..\nodesets
 set INPUT=.\ModelCompiler\Design
 
@@ -21,16 +21,16 @@ REM Set the following values to automatically copy the generated source code to 
 REM
 REM for example:
 REM 	set ANSIC_TARGET=..\..\uastack\Source\Ansi C Stack\
-REM 	set DOTNET_TARGET=..\UA-.NETStandard\Stack\Opc.Ua.Core\
-REM 	set GDS_TARGET=..\UA-.NETStandard\Stack\Opc.Ua.Core\
+REM 	set DOTNET_TARGET=..\..\uastack\Source\Common\Core\
+REM 	set GDS_TARGET=..\..\uastack\Source\Common\Core\
 REM 	set DI_TARGET=...\..\uastack\Source\Common\Core\Stack\Generated\
 REM 	set ADI_TARGET=..\..\uastack\Source\Common\Core\Stack\Generated\
 REM
 REM Leaving these fields empty will skip the operation
 
 set ANSIC_TARGET=
-set DOTNET_TARGET=
-set GDS_TARGET=
+set DOTNET_TARGET=..\UA-.NETStandard4\Stack\Opc.Ua.Core
+set GDS_TARGET=..\UA-.NETStandard4\Stack\Opc.Ua.Core
 set DI_TARGET=
 set ADI_TARGET=
 
