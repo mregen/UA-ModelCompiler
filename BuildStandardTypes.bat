@@ -30,7 +30,7 @@ REM Leaving these fields empty will skip the operation
 
 set ANSIC_TARGET=
 set DOTNET_TARGET=..\UA-.NETStandard4\Stack\Opc.Ua.Core
-set GDS_TARGET=..\UA-.NETStandard4\Stack\Opc.Ua.Core
+set GDS_TARGET=..\UA-.NETStandard4\SampleApplications\Samples\GDS\ServerCommon\Model
 set DI_TARGET=
 set ADI_TARGET=
 
@@ -133,14 +133,14 @@ REM STEP 2b) Copy code to GDS
 IF "%GDS_TARGET%" NEQ "" (
 	ECHO Copying GDS code to %GDS_TARGET%
 	ECHO ON
-	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.Types.bsd" "%GDS_TARGET%\Stack\Core\Schema\Opc.Ua.Gds.Types.bsd"
-	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.Types.xsd" "%GDS_TARGET%\Stack\Core\Schema\Opc.Ua.Gds.Types.xsd"
-	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.NodeSet2.xml" "%GDS_TARGET%\Stack\Core\Schema\Opc.Ua.Gds.NodeSet2.xml"
-	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.Constants.cs" "%GDS_TARGET%\Stack\Core\Stack\Generated\Opc.Ua.Gds.Constants.cs"
-	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.DataTypes.cs" "%GDS_TARGET%\Stack\Core\Stack\Generated\Opc.Ua.Gds.DataTypes.cs"
-	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.Classes.cs" "%GDS_TARGET%\GDS\Server\Model\Opc.Ua.Gds.Classes.cs"
-	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.PredefinedNodes.uanodes" "%GDS_TARGET%\GDS\Server\Model\Opc.Ua.Gds.PredefinedNodes.uanodes"
-	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.PredefinedNodes.xml" "%GDS_TARGET%\GDS\Server\Model\Opc.Ua.Gds.PredefinedNodes.xml"
+	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.Types.bsd" "%DOTNET_TARGET%\Schema\Opc.Ua.Gds.Types.bsd"
+	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.Types.xsd" "%DOTNET_TARGET%\Schema\Opc.Ua.Gds.Types.xsd"
+	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.NodeSet2.xml" "%DOTNET_TARGET%\Schema\Opc.Ua.Gds.NodeSet2.xml"
+	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.Constants.cs" "%DOTNET_TARGET%\Stack\Generated\Opc.Ua.Gds.Constants.cs"
+	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.DataTypes.cs" "%DOTNET_TARGET%\Stack\Generated\Opc.Ua.Gds.DataTypes.cs"
+	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.Classes.cs" "%GDS_TARGET%\Opc.Ua.Gds.Classes.cs"
+	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.PredefinedNodes.uanodes" "%GDS_TARGET%\Opc.Ua.Gds.PredefinedNodes.uanodes"
+	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.PredefinedNodes.xml" "%GDS_TARGET%\Opc.Ua.Gds.PredefinedNodes.xml"
 	@ECHO OFF
 )
 
