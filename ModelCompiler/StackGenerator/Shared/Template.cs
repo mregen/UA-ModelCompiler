@@ -349,7 +349,6 @@ namespace Opc.Ua.CodeGenerator
                 // read next line.
                 line = m_reader.ReadLine();
             }
-
             return written;
         }
 

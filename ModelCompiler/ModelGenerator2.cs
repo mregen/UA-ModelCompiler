@@ -1677,7 +1677,7 @@ namespace Opc.Ua.ModelCompiler
                             return GetBinaryDataType((DataTypeDesign)dataType.BaseTypeNode);
                         }
 
-                        return String.Format("ua:Int32");
+                        return String.Format("opc:Int32");
                     }
 
                     string prefix = "tns";
@@ -2577,7 +2577,7 @@ namespace Opc.Ua.ModelCompiler
 
                 AddTemplate(
                     template,
-                    "result = OnCall(context);",
+                    "result = OnCall(_context);",
                     null,
                     new MethodDesign[] { method },
                     new LoadTemplateEventHandler(LoadTemplate_OnCallImplementation),
@@ -3639,7 +3639,7 @@ namespace Opc.Ua.ModelCompiler
         }
         #endregion
 
-        #region "result = OnCall(context);"
+        #region "result = OnCall(_context);"
         private string LoadTemplate_OnCallImplementation(Template template, Context context)
         {
             MethodDesign method = context.Target as MethodDesign;
