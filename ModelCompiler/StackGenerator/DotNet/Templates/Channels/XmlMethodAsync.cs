@@ -26,6 +26,23 @@ public _NAME_ResponseMessage _NAME_(_NAME_Message request)
     }
 }
 
+#if (NET_STANDARD_ASYNC)
+/// <summary>
+/// The async client side implementation of the _NAME_ service contract.
+/// </summary>
+public Task<_NAME_ResponseMessage> _NAME_Async(_NAME_Message request)
+{
+    try
+    {
+        return this.Channel._NAME_Async(request);
+    }
+    catch (FaultException<ServiceFault> e)
+    {
+        throw HandleSoapFault(e);
+    }
+}
+#endif
+
 /// <summary>
 /// The client side implementation of the Begin_NAME_ service contract.
 /// </summary>
