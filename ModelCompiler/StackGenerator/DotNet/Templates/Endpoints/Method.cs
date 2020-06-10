@@ -1,7 +1,7 @@
 class Placeholder
 {
-    // ***START***
-    #region _NAME_ Service
+// ***START***
+#region _NAME_ Service
 #if (!OPCUA_EXCLUDE__NAME_)
 /// <summary>
 /// Invokes the _NAME_ service.
@@ -129,6 +129,6 @@ public virtual Task<_NAME_ResponseMessage> _NAME_Async(_NAME_Message message)
 #endif
 #endif
 #endif
-    #endregion
-    // ***END***
+#endregion
+// ***END***
 }

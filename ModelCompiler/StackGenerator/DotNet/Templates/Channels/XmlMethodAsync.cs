@@ -2,7 +2,7 @@ using System;
 
 class Placeholder
 {
-    // ***START***
+// ***START***
 #if (!OPCUA_EXCLUDE__NAME_)
 #if (!NET_STANDARD)
 /// <summary>
@@ -108,5 +108,5 @@ public Task<_NAME_ResponseMessage> _NAME_Async(_NAME_Message request)
 }
 #endif
 #endif
-    // ***END***
+// ***END***
 }
