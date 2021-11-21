@@ -5,13 +5,21 @@
     <TargetFrameworks>net5.0</TargetFrameworks>
     <IntermediateOutputPath>$(SolutionDir)build\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
     <RootNamespace>ModelCompiler</RootNamespace>
+	<!--
     <VersionSuffix>2.0.$([System.DateTime]::UtcNow.ToString(yyMM)).$([System.DateTime]::UtcNow.ToString(ddmm))</VersionSuffix>
     <AssemblyVersion Condition=" '$(VersionSuffix)' == '' ">0.0.0.1</AssemblyVersion>
     <AssemblyVersion Condition=" '$(VersionSuffix)' != '' ">$(VersionSuffix)</AssemblyVersion>
     <Version Condition=" '$(VersionSuffix)' == '' ">0.0.1.0</Version>
     <Version Condition=" '$(VersionSuffix)' != '' ">$(VersionSuffix)</Version>
+	-->
     <Copyright>Copyright © OPC Foundation</Copyright>
     <Product>OPC UA Model Compiler</Product>
+
+	<PackageId>OPCFoundation.Opc.Ua.ModelCompiler</PackageId>
+	<PackAsTool>true</PackAsTool>
+	<ToolCommandName>Opc.Ua.ModelCompiler</ToolCommandName>
+	<PackageOutputPath>./nupkg</PackageOutputPath>
+
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -268,7 +276,6 @@
     <EmbeddedResource Include="CSVs\UA Status Codes.csv" />
     <EmbeddedResource Include="CSVs\UNECE_to_OPCUA.csv" />
     <EmbeddedResource Include="Design.v103\BuiltInTypes.xml" />
-    <Content Include="Design.v103\DemoModel.xml" />
     <Content Include="Design.v103\MDIS.xml" />
     <Content Include="Design.v103\MTConnectModel.xml" />
     <Content Include="Design.v103\OpcUaAdiModel.xml" />
@@ -452,6 +459,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Nerdbank.GitVersioning" Version="3.4.244">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Core" Version="1.4.367.65" />
   </ItemGroup>
   

@@ -1,0 +1,25 @@
+# Azure pipeline
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+pr:
+  autoCancel: true
+  branches:
+    include:
+    - '*'
+
+stages:
+- stage: build
+  displayName: 'Build Modelcompiler solution'
+  jobs:
+  - job: buildallsln
+    displayName: Build Solutions 
+    pool:
+      vmImage: 'windows-2022'
+    steps:
+    - task: MSBuild@1
+      displayName: MS Build Release
+      inputs:
+        solution: '**/*.sln' 
+        configuration: 'Release'
+        platform: 'Any CPU'
