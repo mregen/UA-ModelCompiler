@@ -1,8 +1,8 @@
 @ECHO off
 SETLOCAL
 
-set MODELCOMPILER=..\..\build\bin\Release\Opc.Ua.ModelCompiler\net5.0\Opc.Ua.ModelCompiler.exe
-set MODEL=OpcUaNodeSetModel
+set MODELCOMPILER=..\..\build\bin\Release\net5.0\Opc.Ua.ModelCompiler.exe
+set MODEL=DemoModel
 set VERSION=v104
 set EXCLUDE=Draft
 set INPUT=.
