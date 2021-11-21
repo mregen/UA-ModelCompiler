@@ -1,0 +1,56 @@
+# Azure pipeline
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+pr:
+  autoCancel: true
+  branches:
+    include:
+    - '*'
+
+stages:
+- stage: build
+  displayName: 'Build Modelcompiler solution'
+  jobs:
+  - job: buildallsln
+    displayName: Build Solutions 
+    pool:
+      vmImage: 'windows-2022'
+    steps:
+    - task: NuGetToolInstaller@1
+      inputs:
+        versionSpec: '>=5.4.x'
+    - task: NuGetCommand@2
+      displayName: Restore 
+      inputs:
+        command: restore
+        restoreSolution: '**/*.sln'
+        configuration: 'Release'
+    - task: MSBuild@1
+      displayName: Build 
+      inputs:
+        solution: '**/*.sln' 
+        configuration: 'Release'
+        platform: 'Any CPU'
+    - task: DotNetCoreCLI@2
+      displayName: Pack Nuget
+      inputs:
+        command: pack
+        packagesToPack:  '**/*.sln'
+        configuration: 'Release'
+        configurationToPack: 'Release'
+        nobuild: true
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Artifacts'
+      inputs:
+        path: $(Build.ArtifactStagingDirectory)
+        artifact: 'modelcompiler_$(NBGV_Version)_$(NBGV_NugetPackageVersion)'
+    - task: NuGetCommand@2
+      displayName: Upload Nuget
+      inputs:
+        command: 'push'
+        condition: and(succeeded(), ne( $(VSTSFEED), ''))
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/**/OPCFoundation.*.nupkg'
+        nuGetFeedType: 'internal'
+        publishVstsFeed: '$(VSTSFEED)'
+        allowPackageConflicts: true

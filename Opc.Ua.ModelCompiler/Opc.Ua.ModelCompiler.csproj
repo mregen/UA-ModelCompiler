@@ -5,13 +5,15 @@
     <TargetFrameworks>net5.0</TargetFrameworks>
     <IntermediateOutputPath>$(SolutionDir)build\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
     <RootNamespace>ModelCompiler</RootNamespace>
-    <VersionSuffix>2.0.$([System.DateTime]::UtcNow.ToString(yyMM)).$([System.DateTime]::UtcNow.ToString(ddmm))</VersionSuffix>
-    <AssemblyVersion Condition=" '$(VersionSuffix)' == '' ">0.0.0.1</AssemblyVersion>
-    <AssemblyVersion Condition=" '$(VersionSuffix)' != '' ">$(VersionSuffix)</AssemblyVersion>
-    <Version Condition=" '$(VersionSuffix)' == '' ">0.0.1.0</Version>
-    <Version Condition=" '$(VersionSuffix)' != '' ">$(VersionSuffix)</Version>
+	  
     <Copyright>Copyright © OPC Foundation</Copyright>
     <Product>OPC UA Model Compiler</Product>
+
+	<PackageId>OPCFoundation.Opc.Ua.ModelCompiler</PackageId>
+	<PackAsTool>true</PackAsTool>
+	<ToolCommandName>Opc.Ua.ModelCompiler</ToolCommandName>
+	<PackageOutputPath>./nupkg</PackageOutputPath>
+
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -21,6 +23,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>$(SolutionDir)build\bin\$(Configuration)\</OutputPath>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Design.v105\**" />
+    <EmbeddedResource Remove="Design.v105\**" />
+    <None Remove="Design.v105\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="ExceptionDlg.cs" />
@@ -161,17 +169,6 @@
     <None Remove="Design.v104\UA Core Services.xml" />
     <None Remove="Design.v104\UA Defined Types.xml" />
     <None Remove="Design.v104\UA Status Codes.xml" />
-    <None Remove="Design.v105\BuiltInTypes.xml" />
-    <None Remove="Design.v105\DemoModel.xml" />
-    <None Remove="Design.v105\OpcUaDiModel.xml" />
-    <None Remove="Design.v105\OpcUaGdsModel.xml" />
-    <None Remove="Design.v105\OpcUaNodeSetModel.xml" />
-    <None Remove="Design.v105\OpcUaProvisioningModel.xml" />
-    <None Remove="Design.v105\StandardTypes.xml" />
-    <None Remove="Design.v105\UA Attributes.xml" />
-    <None Remove="Design.v105\UA Core Services.xml" />
-    <None Remove="Design.v105\UA Defined Types.xml" />
-    <None Remove="Design.v105\UA Status Codes.xml" />
     <None Remove="License\NONE.txt" />
     <None Remove="License\UA_MIT.txt" />
     <None Remove="License\UA_MIT_XML.txt" />
@@ -273,7 +270,6 @@
     <EmbeddedResource Include="CSVs\UA Status Codes.csv" />
     <EmbeddedResource Include="CSVs\UNECE_to_OPCUA.csv" />
     <EmbeddedResource Include="Design.v103\BuiltInTypes.xml" />
-    <Content Include="Design.v103\DemoModel.xml" />
     <Content Include="Design.v103\MDIS.xml" />
     <Content Include="Design.v103\MTConnectModel.xml" />
     <Content Include="Design.v103\OpcUaAdiModel.xml" />
@@ -304,17 +300,6 @@
     <EmbeddedResource Include="Design.v104\UA Core Services.xml" />
     <Content Include="Design.v104\UA Defined Types.xml" />
     <EmbeddedResource Include="Design.v104\UA Status Codes.xml" />
-    <EmbeddedResource Include="Design.v105\BuiltInTypes.xml" />
-    <Content Include="Design.v105\DemoModel.xml" />
-    <Content Include="Design.v105\OpcUaDiModel.xml" />
-    <Content Include="Design.v105\OpcUaGdsModel.xml" />
-    <Content Include="Design.v105\OpcUaNodeSetModel.xml" />
-    <Content Include="Design.v105\OpcUaProvisioningModel.xml" />
-    <EmbeddedResource Include="Design.v105\StandardTypes.xml" />
-    <EmbeddedResource Include="Design.v105\UA Attributes.xml" />
-    <EmbeddedResource Include="Design.v105\UA Core Services.xml" />
-    <Content Include="Design.v105\UA Defined Types.xml" />
-    <EmbeddedResource Include="Design.v105\UA Status Codes.xml" />
     <EmbeddedResource Include="License\NONE.txt" />
     <EmbeddedResource Include="License\UA_MIT.txt" />
     <EmbeddedResource Include="License\UA_MIT_XML.txt" />
@@ -468,7 +453,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Core" Version="1.4.367.41" />
+    <PackageReference Include="Nerdbank.GitVersioning" Version="3.4.244">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Core" Version="1.4.367.64-preview" />
   </ItemGroup>
   
 </Project>
