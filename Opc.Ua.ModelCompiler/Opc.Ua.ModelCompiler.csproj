@@ -463,7 +463,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Core" Version="1.4.367.65" />
+    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Core" Version="1.4.367.64-preview" />
   </ItemGroup>
   
 </Project>
