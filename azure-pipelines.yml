@@ -45,3 +45,12 @@ stages:
       inputs:
         path: $(Build.ArtifactStagingDirectory)
         artifact: 'modelcompiler_$(NBGV_Version)_$(NBGV_NugetPackageVersion)'
+    - task: NuGetCommand@2
+      displayName: Upload Nuget
+      inputs:
+        command: 'push'
+        condition: and(succeeded(), ne( $(VSTSFEED), ''))
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/**/OPCFoundation.*.nupkg'
+        nuGetFeedType: 'internal'
+        publishVstsFeed: '$(VSTSFEED)'
+        allowPackageConflicts: true
