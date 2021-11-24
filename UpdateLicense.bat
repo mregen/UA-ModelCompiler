@@ -1,7 +1,7 @@
-@ECHO off
+REM @ECHO off
 SETLOCAL
 
-set MODELCOMPILER=.\build\bin\Release\net5.0\Opc.Ua.ModelCompiler.exe
+set MODELCOMPILER=.\build\bin\Debug\netcoreapp3.1\Opc.Ua.ModelCompiler.exe
 set OUTPUT=%1
 
 "%MODELCOMPILER%" -input %OUTPUT% -pattern *.xml -license MITXML -silent

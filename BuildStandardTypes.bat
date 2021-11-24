@@ -1,8 +1,8 @@
-@ECHO off
+@ECHO on
 SETLOCAL
 
 set ROOT=%~dp0
-set MODELCOMPILER=%ROOT%build\bin\Release\net5.0\Opc.Ua.ModelCompiler.exe
+set MODELCOMPILER=%ROOT%build\bin\Debug\netcoreapp3.1\Opc.Ua.ModelCompiler.exe
 set OUTPUT=%ROOT%..\nodesets
 set INPUT=%ROOT%Opc.Ua.ModelCompiler\Design
 set CSVINPUT=%ROOT%Opc.Ua.ModelCompiler\CSVs
@@ -19,8 +19,8 @@ set GDS_TARGET=
 set DI_TARGET=
 set ADI_TARGET=
 set NODESET_TARGET=.\Tests\NodeSetTest
-set DEMOMODEL_TARGET=.\Tests\DemoModel
-set PROVISIONING_TARGET=.\Tests\Provisioning\
+set DEMOMODEL_TARGET=
+set PROVISIONING_TARGET=
 
 REM Make sure that all of our output locations exist.
 IF NOT EXIST %MODELCOMPILER% GOTO noModelCompiler
@@ -34,7 +34,8 @@ set USEALLOWSUBTYPES=-useAllowSubtypes
 REM Set overrides for older versions.
 IF "%1"=="v104" (
 	set USEALLOWSUBTYPES=
-	set DOTNET_TARGET=.\Stack\Stack\Opc.Ua.Core\
+    set DOTNET_TARGET=..\UA-.NETStandard7\Stack\Opc.Ua.Core
+    set GDS_TARGET=..\UA-.NETStandard7\Libraries\Opc.Ua.Gds.Server.Common
 )
 
 IF "%1"=="v103" (
@@ -103,6 +104,7 @@ IF "%ANSIC_TARGET%" NEQ "" (
 
 IF "%DOTNET_TARGET%" NEQ "" (
 	ECHO Copying .NET code to %DOTNET_TARGET%
+	ECHO ON
 
 	COPY "%OUTPUT%\Schema\NodeIds.csv" "%DOTNET_TARGET%\Schema\NodeIds.csv"
 	COPY "%OUTPUT%\Schema\AttributeIds.csv" "%DOTNET_TARGET%\Schema\AttributeIds.csv"
@@ -149,6 +151,7 @@ CALL UpdateLicense "%OUTPUT%\GDS"
 
 IF "%GDS_TARGET%" NEQ "" (
 	ECHO Copying .NET code to %GDS_TARGET%
+	@ECHO ON
 	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.Types.bsd" "%DOTNET_TARGET%\Schema\Opc.Ua.Gds.Types.bsd"
 	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.Types.xsd" "%DOTNET_TARGET%\Schema\Opc.Ua.Gds.Types.xsd"
 	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.NodeSet2.xml" "%DOTNET_TARGET%\Schema\Opc.Ua.Gds.NodeSet2.xml"
@@ -157,6 +160,7 @@ IF "%GDS_TARGET%" NEQ "" (
 	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.Classes.cs" "%GDS_TARGET%\Model\Opc.Ua.Gds.Classes.cs"
 	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.PredefinedNodes.uanodes" "%GDS_TARGET%\Model\Opc.Ua.Gds.PredefinedNodes.uanodes"
 	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.PredefinedNodes.xml" "%GDS_TARGET%\Model\Opc.Ua.Gds.PredefinedNodes.xml"
+	@ECHO OFF
 )
 :skipGDS
 
