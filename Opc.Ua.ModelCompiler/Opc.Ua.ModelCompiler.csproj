@@ -26,12 +26,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Design.v105\**" />
-    <EmbeddedResource Remove="Design.v105\**" />
-    <None Remove="Design.v105\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Remove="ExceptionDlg.cs" />
     <Compile Remove="ExceptionDlg.Designer.cs" />
     <Compile Remove="MainForm.cs" />
