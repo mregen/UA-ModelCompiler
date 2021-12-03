@@ -1,4 +1,4 @@
-@ECHO off
+@ECHO on
 SETLOCAL
 
 set ROOT=%~dp0
@@ -34,7 +34,9 @@ set USEALLOWSUBTYPES=-useAllowSubtypes
 REM Set overrides for older versions.
 IF "%1"=="v104" (
 	set USEALLOWSUBTYPES=
-	set DOTNET_TARGET=.\Stack\Stack\Opc.Ua.Core\
+	set MODELVERSION=-mv 1.04.10 -pd 2021-09-15
+    set DOTNET_TARGET=..\UA-.NETStandard7\Stack\Opc.Ua.Core
+    set GDS_TARGET=..\UA-.NETStandard7\Libraries\Opc.Ua.Gds.Server.Common
 )
 
 IF "%1"=="v103" (
@@ -68,9 +70,9 @@ TYPE "%CSVINPUT%\StandardTypes.csv" | FINDSTR /V /E Unspecified > "%OUTPUT%\Sche
 COPY "%CSVINPUT%\UA Attributes.csv" "%OUTPUT%\Schema\AttributeIds.csv"
 COPY "%CSVINPUT%\UA ServerCapabilities.csv" "%OUTPUT%\Schema\ServerCapabilities.csv"
 COPY "%OUTPUT%\DotNet\Opc.Ua.StatusCodes.csv" "%OUTPUT%\Schema\StatusCode.csv"
-COPY ".\Schemas\UANodeSet.xsd" "%OUTPUT%\Schema\UANodeSet.xsd"
-COPY ".\Schemas\SecuredApplication.xsd" "%OUTPUT%\Schema\SecuredApplication.xsd"
-COPY ".\Schemas\OPCBinarySchema.xsd" "%OUTPUT%\Schema\OPCBinarySchema.xsd"
+COPY "%SCHEMAINPUT%\UANodeSet.xsd" "%OUTPUT%\Schema\UANodeSet.xsd"
+COPY "%SCHEMAINPUT%\Schemas\SecuredApplication.xsd" "%OUTPUT%\Schema\SecuredApplication.xsd"
+COPY "%SCHEMAINPUT%\Schemas\OPCBinarySchema.xsd" "%OUTPUT%\Schema\OPCBinarySchema.xsd"
 DEL /Q "%OUTPUT%\Schema\Opc.Ua.NodeIds.csv"
 DEL /Q "%OUTPUT%\Schema\Opc.Ua.NodeIds.Services.csv"
 @ECHO OFF
@@ -103,6 +105,7 @@ IF "%ANSIC_TARGET%" NEQ "" (
 
 IF "%DOTNET_TARGET%" NEQ "" (
 	ECHO Copying .NET code to %DOTNET_TARGET%
+	ECHO ON
 
 	COPY "%OUTPUT%\Schema\NodeIds.csv" "%DOTNET_TARGET%\Schema\NodeIds.csv"
 	COPY "%OUTPUT%\Schema\AttributeIds.csv" "%DOTNET_TARGET%\Schema\AttributeIds.csv"
@@ -149,6 +152,7 @@ CALL UpdateLicense "%OUTPUT%\GDS"
 
 IF "%GDS_TARGET%" NEQ "" (
 	ECHO Copying .NET code to %GDS_TARGET%
+	@ECHO ON
 	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.Types.bsd" "%DOTNET_TARGET%\Schema\Opc.Ua.Gds.Types.bsd"
 	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.Types.xsd" "%DOTNET_TARGET%\Schema\Opc.Ua.Gds.Types.xsd"
 	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.NodeSet2.xml" "%DOTNET_TARGET%\Schema\Opc.Ua.Gds.NodeSet2.xml"
@@ -157,6 +161,7 @@ IF "%GDS_TARGET%" NEQ "" (
 	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.Classes.cs" "%GDS_TARGET%\Model\Opc.Ua.Gds.Classes.cs"
 	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.PredefinedNodes.uanodes" "%GDS_TARGET%\Model\Opc.Ua.Gds.PredefinedNodes.uanodes"
 	COPY "%OUTPUT%\GDS\Opc.Ua.Gds.PredefinedNodes.xml" "%GDS_TARGET%\Model\Opc.Ua.Gds.PredefinedNodes.xml"
+	@ECHO OFF
 )
 :skipGDS
 
