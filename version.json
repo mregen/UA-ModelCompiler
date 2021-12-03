@@ -1,12 +1,13 @@
 {
   "$schema": "https://raw.githubusercontent.com/AArnott/Nerdbank.GitVersioning/master/src/NerdBank.GitVersioning/version.schema.json",
-  "version": "2.0.100-preview",
+  "version": "2.1.100",
   "versionHeightOffset": 0,
   "nugetPackageVersion": {
     "semVer": 2
   },
   "publicReleaseRefSpec": [
-    "^refs/heads/master$"
+    "^refs/heads/master$",
+	"^refs/heads/nettool$"
   ],
   "cloudBuild": {
     "setVersionVariables": true,
