@@ -31,10 +31,10 @@ jobs:
       run: dotnet restore "UA ModelCompiler.sln" 
       
     - name: Build
-      run: dotnet build --no-restore --configuration Release "UA ModelCompiler.sln" 
+      run: dotnet build --no-restore --configuration Release "UA ModelCompiler Solution.sln" 
       
     - name: Pack Nuget Tool
-      run: dotnet pack --no-build --configuration Release "UA ModelCompiler.sln"
+      run: dotnet pack --no-build --configuration Release "UA ModelCompiler Solution.sln"
 
     - name: Add github feed
       if: ${{ github.event_name != 'pull_request' }} 
@@ -42,10 +42,10 @@ jobs:
       
     - name: Publish NuGet
       if: ${{ github.event_name != 'pull_request' }} 
-      run: dotnet nuget push "bin/Release/*.nupkg"  --source "github"
+      run: dotnet nuget push "build/bin/Release/*.nupkg"  --source "github"
       
     - name: publish NuGet Symbols
       if: ${{ github.event_name != 'pull_request' }} 
-      run: dotnet nuget push "bin/Release/*.snupkg"  --source "github"
+      run: dotnet nuget push "build/bin/Release/*.snupkg"  --source "github"
       
       

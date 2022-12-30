@@ -109,7 +109,7 @@ jobs:
       # This step uses the identity token to provision an ephemeral certificate
       # against the sigstore community Fulcio instance.
       run: |
-        echo Signing ${{ steps.build-and-push.outputs.digest }}
-        echo "${{ env.TAG_BRANCH }},${{ env.TAG_LATEST }}" | xargs -d , -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
+        echo Signing ${{ steps.meta.outputs.tags }}@${{ steps.build-and-push.outputs.digest }}
+        echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
 
 
