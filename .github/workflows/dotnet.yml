@@ -32,13 +32,13 @@ jobs:
       run: ./.azurepipelines/set-version.ps1        
       
     - name: Restore dependencies
-      run: dotnet restore "UA ModelCompiler Solution.sln" 
+      run: dotnet restore "ModelCompiler Solution.sln" 
       
     - name: Build
-      run: dotnet build --no-restore --configuration Release "UA ModelCompiler Solution.sln" 
+      run: dotnet build --no-restore --configuration Release "ModelCompiler Solution.sln" 
       
     - name: Pack Nuget Tool
-      run: dotnet pack --no-build --configuration Release "UA ModelCompiler Solution.sln"
+      run: dotnet pack --no-build --configuration Release "ModelCompiler Solution.sln"
 
     - name: Add github feed
       if: ${{ github.event_name != 'pull_request' }} 
