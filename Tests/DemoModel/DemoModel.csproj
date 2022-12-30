@@ -4,19 +4,8 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>DemoModel</AssemblyName>
-    <IntermediateOutputPath>$(SolutionDir)build\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
     <RootNamespace>DemoModel</RootNamespace>
     <RootNamespace>ModelCompiler</RootNamespace>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>$(SolutionDir)build\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>NET_STANDARD</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>$(SolutionDir)build\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>TRACE;NET_STANDARD</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
