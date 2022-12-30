@@ -10,6 +10,10 @@
     <RootNamespace>ModelCompiler</RootNamespace>
     <Copyright>Copyright © OPC Foundation</Copyright>
     <Product>OPC UA Model Compiler</Product>
+    <PackageId>OPCFoundation.Opc.Ua.ModelCompiler</PackageId>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>Opc.Ua.ModelCompiler</ToolCommandName>
+    <PackageOutputPath>./nupkg</PackageOutputPath>    
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
