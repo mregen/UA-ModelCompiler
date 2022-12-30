@@ -1,0 +1,51 @@
+name: ModelCompiler .NET Tool build
+
+on:
+  push:
+    branches: [ master, docker* ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        
+    - name: Set up .NET 6
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '6.x'
+
+    - name: Setup NuGet.exe
+      uses: NuGet/setup-nuget@v1.1.1
+      
+    - name: Set Version
+      shell: pwsh
+      run: ./.azurepipelines/set-version.ps1        
+      
+    - name: Restore dependencies
+      run: dotnet restore "UA ModelCompiler.sln" 
+      
+    - name: Build
+      run: dotnet build --no-restore --configuration Release "UA ModelCompiler.sln" 
+      
+    - name: Pack Nuget Tool
+      run: dotnet pack --no-build --configuration Release "UA ModelCompiler.sln"
+
+    - name: Add github feed
+      if: ${{ github.event_name != 'pull_request' }} 
+      run: dotnet nuget add source --username ${{ github.repository_owner }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+      
+    - name: Publish NuGet
+      if: ${{ github.event_name != 'pull_request' }} 
+      run: dotnet nuget push "bin/Release/*.nupkg"  --source "github"
+      
+    - name: publish NuGet Symbols
+      if: ${{ github.event_name != 'pull_request' }} 
+      run: dotnet nuget push "bin/Release/*.snupkg"  --source "github"
+      
+      
