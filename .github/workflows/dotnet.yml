@@ -2,7 +2,7 @@ name: ModelCompiler .NET Tool build
 
 on:
   push:
-    branches: [ master, docker* ]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
@@ -46,10 +46,10 @@ jobs:
       
     - name: Publish NuGet
       if: ${{ github.event_name != 'pull_request' }} 
-      run: dotnet nuget push "build/bin/Release/*.nupkg"  --source "github"
+      run: dotnet nuget push "**/*.nupkg"  --source "github"
       
-    - name: publish NuGet Symbols
+    - name: Publish NuGet Symbols
       if: ${{ github.event_name != 'pull_request' }} 
-      run: dotnet nuget push "build/bin/Release/*.snupkg"  --source "github"
+      run: dotnet nuget push "**/*.snupkg"  --source "github"
       
       
