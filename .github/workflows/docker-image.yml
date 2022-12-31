@@ -13,8 +13,9 @@ concurrency:
 env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
-  # github.repository as <account>/<repo>
-  IMAGE_NAME: ${{ github.repository }}
+  # There is no image name
+  IMAGE_NAME: ""
+  DOCKERSIGN: ${{ true && github.event_name != 'pull_request'}}
 
 jobs:
   build-and-push-image:
@@ -22,8 +23,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-      # This is used to complete the identity challenge
-      # with sigstore/fulcio when running outside of PRs.
       id-token: write
 
     steps:
@@ -43,7 +42,7 @@ jobs:
     # Install the cosign tool except on PR
     # https://github.com/sigstore/cosign-installer
     - name: Install cosign
-      if: github.event_name != 'pull_request'
+      if: env.DOCKERSIGN
       uses: sigstore/cosign-installer@main
       with:
         cosign-release: 'v1.13.1'
@@ -64,7 +63,7 @@ jobs:
 
     - name: Prepare Tag Repo Info
       run: |
-        echo IMAGE_REPOSITORY=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]' | awk '{gsub(/-|\./, "")}1') >> $GITHUB_ENV
+        echo IMAGE_REPOSITORY=${{ env.REGISTRY }}/$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]' | awk '{gsub(/-|\./, "")}1')${{ env.IMAGE_NAME }} >> $GITHUB_ENV
         echo IMAGE_VERSION=$(echo ${{ env.NBGV_SimpleVersion }}${{ env.NBGV_PrereleaseVersion }}) >> $GITHUB_ENV
 
     - name: Prepare Tag Branch info
@@ -74,8 +73,8 @@ jobs:
 
     - name: Prepare version and latest tag
       run: |
-        echo TAG_BRANCH=$(echo ${{ env.REGISTRY }}/${{ env.IMAGE_REPOSITORY }}:${{ env.IMAGE_VERSION }}${{ env.IMAGE_TAG }}) >> $GITHUB_ENV
-        echo TAG_LATEST=$(echo ${{ env.REGISTRY }}/${{ env.IMAGE_REPOSITORY }}:latest${{ env.IMAGE_TAG }}) >> $GITHUB_ENV
+        echo TAG_BRANCH=$(echo ${{ env.IMAGE_REPOSITORY }}:${{ env.IMAGE_VERSION }}${{ env.IMAGE_TAG }}) >> $GITHUB_ENV
+        echo TAG_LATEST=$(echo ${{ env.IMAGE_REPOSITORY }}:latest${{ env.IMAGE_TAG }}) >> $GITHUB_ENV
 
     # Extract metadata (tags, labels) for Docker
     # https://github.com/docker/metadata-action
@@ -83,7 +82,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v4
       with:
-        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        images: ${{ env.IMAGE_REPOSITORY }}
 
     # Build and push Docker image with Buildx (don't push on PR)
     # https://github.com/docker/build-push-action
@@ -103,13 +102,13 @@ jobs:
     # Sign the resulting Docker image digest except on PRs.
     # https://github.com/sigstore/cosign
     - name: Sign the published Docker image
-      if: ${{ github.event_name != 'pull_request' }}
+      if: env.DOCKERSIGN
       env:
         COSIGN_EXPERIMENTAL: "true"
       # This step uses the identity token to provision an ephemeral certificate
       # against the sigstore community Fulcio instance.
       run: |
-        echo Signing ${{ env.REGISTRY }}/${{ env.IMAGE_REPOSITORY }}@${{ steps.build-and-push.outputs.digest }}
-        echo "${{ env.REGISTRY }}/${{ env.IMAGE_REPOSITORY }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
+        echo Signing ${{ env.IMAGE_REPOSITORY }}@${{ steps.build-and-push.outputs.digest }}
+        echo "${{ env.IMAGE_REPOSITORY }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
 
 
