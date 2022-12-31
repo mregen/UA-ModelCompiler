@@ -13,8 +13,7 @@ concurrency:
 env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
-  # There is no image name
-  IMAGE_NAME: ""
+  IMAGE_NAME: ${{ github.repository }}
   DOCKERSIGN: ${{ true && github.event_name != 'pull_request'}}
 
 jobs:
@@ -63,7 +62,7 @@ jobs:
 
     - name: Prepare Tag Repo Info
       run: |
-        echo IMAGE_REPOSITORY=${{ env.REGISTRY }}/$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]' | awk '{gsub(/-|\./, "")}1')${{ env.IMAGE_NAME }} >> $GITHUB_ENV
+        echo IMAGE_REPOSITORY=${{ env.REGISTRY }}/$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]' | awk '{gsub(/-|\./, "")}1') >> $GITHUB_ENV
         echo IMAGE_VERSION=$(echo ${{ env.NBGV_SimpleVersion }}${{ env.NBGV_PrereleaseVersion }}) >> $GITHUB_ENV
 
     - name: Prepare Tag Branch info
@@ -82,7 +81,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v4
       with:
-        images: ${{ env.IMAGE_REPOSITORY }}
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
     # Build and push Docker image with Buildx (don't push on PR)
     # https://github.com/docker/build-push-action
