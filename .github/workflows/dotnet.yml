@@ -2,7 +2,7 @@ name: ModelCompiler .NET Tool build
 
 on:
   push:
-    branches: [ master#, docker* ]
+    branches: [ master, nuget* ]
   pull_request:
     branches: [ master ]
 
