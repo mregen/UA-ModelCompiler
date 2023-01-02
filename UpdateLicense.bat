@@ -1,7 +1,7 @@
 @ECHO off
 SETLOCAL
 
-set MODELCOMPILER=.\build\bin\Release\netcoreapp3.1\Opc.Ua.ModelCompiler.exe
+set MODELCOMPILER=.\build\bin\Release\net6.0\Opc.Ua.ModelCompiler.exe
 set OUTPUT=%1
 
 "%MODELCOMPILER%" update-headers -input %OUTPUT% -pattern *.xml -license MITXML -silent
