@@ -30,6 +30,7 @@ private ServiceResult OnWrite__ChildName_(ISystemContext context, NodeState node
     lock (Lock)
     {
         m_value._ChildPath_ = (_ChildDataType_)Write(value);
+        UpdateParent(context);
     }
 
     return ServiceResult.Good;

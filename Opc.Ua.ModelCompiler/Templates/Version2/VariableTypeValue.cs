@@ -30,7 +30,7 @@ public class _ClassName_Value : BaseVariableValue
     /// <remarks />
     public _DataType_ Value
     {
-        get { return m_value;  }
+        get { return m_value; }
         set { m_value = value; }
     }
     #endregion
@@ -84,10 +84,39 @@ public class _ClassName_Value : BaseVariableValue
     {
         lock (Lock)
         {
-            m_value = (_DataType_)Write(value);
+            _DataType_ newValue;
+            if (value is ExtensionObject extensionObject)
+            {
+                newValue = (_DataType_)extensionObject.Body;
+            }
+            else
+            {
+                newValue = (_DataType_)value;
+            }
+
+            if (m_value != newValue)
+            {
+                Timestamp = DateTime.UtcNow;
+                UpdateChildrenChangeMasks(context, newValue);
+                m_value = (_DataType_)Write(newValue);
+                m_variable.UpdateChangeMasks(NodeStateChangeMasks.Value);
+                m_variable.ClearChangeMasks(context, true);
+            }
         }
 
         return ServiceResult.Good;
+    }
+
+    private void UpdateChildrenChangeMasks(ISystemContext context, _DataType_ newValue)
+    {
+        // ListOfUpdateChildrenChangeMasks
+    }
+
+    private void UpdateParent(ISystemContext context)
+    {
+        Timestamp = DateTime.UtcNow;
+        m_variable.UpdateChangeMasks(NodeStateChangeMasks.Value);
+        m_variable.ClearChangeMasks(context, false);
     }
 
     // ListOfChildMethods

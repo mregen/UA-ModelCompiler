@@ -3348,6 +3348,14 @@ namespace ModelCompiler
 
             AddTemplate(
                 template,
+                "// ListOfUpdateChildrenChangeMasks",
+                null,
+                fields,
+                new LoadTemplateEventHandler(WriteTemplate_VariableTypeValueUpdateChildrenChangeMasks),
+                null);
+
+            AddTemplate(
+                template,
                 "// ListOfChildMethods",
                 TemplatePath + "Version2.VariableTypeValueField.cs",
                 fields,
@@ -3393,6 +3401,41 @@ namespace ModelCompiler
 
             template.WriteNextLine(context.Prefix);
             template.Write("    updateList.Add(instance);");
+
+            template.WriteNextLine(context.Prefix);
+            template.Write("}");
+
+            return context.TemplatePath;
+        }
+        #endregion
+
+        #region "// ListOfUpdateChildrenChangeMasks"
+        private string WriteTemplate_VariableTypeValueUpdateChildrenChangeMasks(Template template, Context context)
+        {
+            KeyValuePair<string, Parameter>? field = context.Target as KeyValuePair<string, Parameter>?;
+
+            if (field == null)
+            {
+                return null;
+            }
+
+            if (!context.FirstInList)
+            {
+                template.WriteNextLine(context.Prefix);
+            }
+
+            string name = field.Value.Key;
+            // string path = field.Value.Key.Replace('_', '.');
+            string path = field.Value.Key;
+
+            template.WriteNextLine(context.Prefix);
+            template.Write("if (m_value.{0} != newValue.{1})", path, path);
+
+            template.WriteNextLine(context.Prefix);
+            template.Write("{");
+
+            template.WriteNextLine(context.Prefix);
+            template.Write("    m_variable.{0}.UpdateChangeMasks(NodeStateChangeMasks.Value);", path);
 
             template.WriteNextLine(context.Prefix);
             template.Write("}");
