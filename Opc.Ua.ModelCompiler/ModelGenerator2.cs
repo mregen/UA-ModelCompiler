@@ -3380,13 +3380,22 @@ namespace ModelCompiler
             template.Write("instance = m_variable.{0};", path);
 
             template.WriteNextLine(context.Prefix);
-            template.Write("instance.OnReadValue = OnRead_{0};", name);
+            template.Write("if (instance != null)");
 
             template.WriteNextLine(context.Prefix);
-            template.Write("instance.OnSimpleWriteValue = OnWrite_{0};", name);
+            template.Write("{");
 
             template.WriteNextLine(context.Prefix);
-            template.Write("updateList.Add(instance);");
+            template.Write("    instance.OnReadValue = OnRead_{0};", name);
+
+            template.WriteNextLine(context.Prefix);
+            template.Write("    instance.OnSimpleWriteValue = OnWrite_{0};", name);
+
+            template.WriteNextLine(context.Prefix);
+            template.Write("    updateList.Add(instance);");
+
+            template.WriteNextLine(context.Prefix);
+            template.Write("}");
 
             return context.TemplatePath;
         }
