@@ -3440,8 +3440,8 @@ namespace ModelCompiler
             template.WriteNextLine(context.Prefix);
             template.Write("    m_variable.{0}.Timestamp = timestamp;", path);
 
-            template.WriteNextLine(context.Prefix);
-            template.Write("    m_variable.{0}.UpdateChangeMasks(NodeStateChangeMasks.Value);", path);
+            //template.WriteNextLine(context.Prefix);
+            //template.Write("    m_variable.{0}.UpdateChangeMasks(NodeStateChangeMasks.Value);", path);
 
             template.WriteNextLine(context.Prefix);
             template.Write("}");

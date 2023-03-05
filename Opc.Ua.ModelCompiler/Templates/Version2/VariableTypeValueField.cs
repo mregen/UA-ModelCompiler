@@ -55,23 +55,14 @@ private ServiceResult OnWrite__ChildName_(
 {
     lock (Lock)
     {
-        _ChildDataType_ newValue;
-        if (value is ExtensionObject extensionObject)
+        if (timestamp == DateTime.MinValue)
         {
-            newValue = (_ChildDataType_)extensionObject.Body;
+            timestamp = DateTime.UtcNow;
         }
-        else
-        {
-            newValue = (_ChildDataType_)value;
-        }
-
-        if (newValue != m_value._ChildPath_)
-        {
-            m_variable._ChildPath_.StatusCode = statusCode;
-            m_variable._ChildPath_.Timestamp = timestamp;
-            m_value._ChildPath_ = (_ChildDataType_)Write(newValue);
-            UpdateParent(context, ref statusCode, ref timestamp);
-        }
+        m_variable._ChildPath_.StatusCode = statusCode;
+        m_variable._ChildPath_.Timestamp = timestamp;
+        m_value._ChildPath_ = (_ChildDataType_)Write(value);
+        UpdateParent(context, ref statusCode, ref timestamp);
     }
 
     return ServiceResult.Good;
