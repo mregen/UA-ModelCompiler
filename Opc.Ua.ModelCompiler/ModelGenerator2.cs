@@ -3397,7 +3397,7 @@ namespace ModelCompiler
             template.Write("    instance.OnReadValue = OnRead_{0};", name);
 
             template.WriteNextLine(context.Prefix);
-            template.Write("    instance.OnSimpleWriteValue = OnWrite_{0};", name);
+            template.Write("    instance.OnWriteValue = OnWrite_{0};", name);
 
             template.WriteNextLine(context.Prefix);
             template.Write("    updateList.Add(instance);");
@@ -3433,6 +3433,12 @@ namespace ModelCompiler
 
             template.WriteNextLine(context.Prefix);
             template.Write("{");
+
+            template.WriteNextLine(context.Prefix);
+            template.Write("    m_variable.{0}.StatusCode = statusCode;", path);
+
+            template.WriteNextLine(context.Prefix);
+            template.Write("    m_variable.{0}.Timestamp = timestamp;", path);
 
             template.WriteNextLine(context.Prefix);
             template.Write("    m_variable.{0}.UpdateChangeMasks(NodeStateChangeMasks.Value);", path);

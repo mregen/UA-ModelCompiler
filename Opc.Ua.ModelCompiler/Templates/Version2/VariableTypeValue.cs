@@ -45,7 +45,7 @@ public class _ClassName_Value : BaseVariableValue
             variable.Value = m_value;
 
             variable.OnReadValue = OnReadValue;
-            variable.OnSimpleWriteValue = OnWriteValue;
+            variable.OnWriteValue = OnWriteValue;
 
             BaseVariableState instance = null;
             List<BaseInstanceState> updateList = new List<BaseInstanceState>();
@@ -80,7 +80,14 @@ public class _ClassName_Value : BaseVariableValue
         }
     }
 
-    private ServiceResult OnWriteValue(ISystemContext context, NodeState node, ref object value)
+    private ServiceResult OnWriteValue(
+        ISystemContext context,
+        NodeState node,
+        NumericRange indexRange,
+        QualifiedName dataEncoding,
+        ref object value,
+        ref StatusCode statusCode,
+        ref DateTime timestamp)
     {
         lock (Lock)
         {
@@ -96,25 +103,24 @@ public class _ClassName_Value : BaseVariableValue
 
             if (m_value != newValue)
             {
-                Timestamp = DateTime.UtcNow;
-                UpdateChildrenChangeMasks(context, newValue);
+                Timestamp = timestamp;
+                UpdateChildrenChangeMasks(context, ref newValue, ref statusCode, ref timestamp);
                 m_value = (_DataType_)Write(newValue);
                 m_variable.UpdateChangeMasks(NodeStateChangeMasks.Value);
-                m_variable.ClearChangeMasks(context, true);
             }
         }
 
         return ServiceResult.Good;
     }
 
-    private void UpdateChildrenChangeMasks(ISystemContext context, _DataType_ newValue)
+    private void UpdateChildrenChangeMasks(ISystemContext context, ref _DataType_ newValue, ref StatusCode statusCode, ref DateTime timestamp)
     {
         // ListOfUpdateChildrenChangeMasks
     }
 
-    private void UpdateParent(ISystemContext context)
+    private void UpdateParent(ISystemContext context, ref StatusCode statusCode, ref DateTime timestamp)
     {
-        Timestamp = DateTime.UtcNow;
+        Timestamp = timestamp;
         m_variable.UpdateChangeMasks(NodeStateChangeMasks.Value);
         m_variable.ClearChangeMasks(context, false);
     }
