@@ -101,10 +101,10 @@ public class _ClassName_Value : BaseVariableValue
                 newValue = (_DataType_)value;
             }
 
-            if (m_value != newValue)
+            if (!Utils.IsEqual(m_value, newValue))
             {
-                Timestamp = timestamp;
                 UpdateChildrenChangeMasks(context, ref newValue, ref statusCode, ref timestamp);
+                Timestamp = timestamp;
                 m_value = (_DataType_)Write(newValue);
                 m_variable.UpdateChangeMasks(NodeStateChangeMasks.Value);
             }
@@ -123,6 +123,17 @@ public class _ClassName_Value : BaseVariableValue
         Timestamp = timestamp;
         m_variable.UpdateChangeMasks(NodeStateChangeMasks.Value);
         m_variable.ClearChangeMasks(context, false);
+    }
+
+    private void UpdateChildVariableStatus(BaseDataVariableState child, ref StatusCode statusCode, ref DateTime timestamp)
+    {
+        if (child == null) return;
+        child.StatusCode = statusCode;
+        if (timestamp == DateTime.MinValue)
+        {
+            timestamp = DateTime.UtcNow;
+        }
+        child.Timestamp = timestamp;
     }
 
     // ListOfChildMethods

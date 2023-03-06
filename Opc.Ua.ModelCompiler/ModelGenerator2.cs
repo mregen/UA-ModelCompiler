@@ -3429,22 +3429,7 @@ namespace ModelCompiler
             string path = field.Value.Key;
 
             template.WriteNextLine(context.Prefix);
-            template.Write("if (m_value.{0} != newValue.{1})", path, path);
-
-            template.WriteNextLine(context.Prefix);
-            template.Write("{");
-
-            template.WriteNextLine(context.Prefix);
-            template.Write("    m_variable.{0}.StatusCode = statusCode;", path);
-
-            template.WriteNextLine(context.Prefix);
-            template.Write("    m_variable.{0}.Timestamp = timestamp;", path);
-
-            //template.WriteNextLine(context.Prefix);
-            //template.Write("    m_variable.{0}.UpdateChangeMasks(NodeStateChangeMasks.Value);", path);
-
-            template.WriteNextLine(context.Prefix);
-            template.Write("}");
+            template.Write("if (!Utils.IsEqual(m_value.{0}, newValue.{0})) UpdateChildVariableStatus(m_variable.{0}, ref statusCode, ref timestamp);", path);
 
             return context.TemplatePath;
         }

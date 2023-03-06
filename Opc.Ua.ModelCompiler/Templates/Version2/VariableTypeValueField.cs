@@ -17,8 +17,7 @@ private ServiceResult OnRead__ChildName_(
         DoBeforeReadProcessing(context, node);
 
         var childVariable = m_variable?._ChildPath_;
-        if (childVariable != null &&
-            StatusCode.IsBad(childVariable.StatusCode))
+        if (childVariable != null && StatusCode.IsBad(childVariable.StatusCode))
         {
             value = null;
             statusCode = childVariable.StatusCode;
@@ -35,8 +34,11 @@ private ServiceResult OnRead__ChildName_(
         if (childVariable != null && ServiceResult.IsNotBad(result))
         {
             timestamp = childVariable.Timestamp;
-            statusCode = childVariable.StatusCode;
-            return new ServiceResult(statusCode);
+            if (statusCode != childVariable.StatusCode)
+            {
+                statusCode = childVariable.StatusCode;
+                result = new ServiceResult(statusCode);
+            }
         }
 
         return result;
@@ -55,12 +57,7 @@ private ServiceResult OnWrite__ChildName_(
 {
     lock (Lock)
     {
-        if (timestamp == DateTime.MinValue)
-        {
-            timestamp = DateTime.UtcNow;
-        }
-        m_variable._ChildPath_.StatusCode = statusCode;
-        m_variable._ChildPath_.Timestamp = timestamp;
+        UpdateChildVariableStatus(m_variable._ChildPath_, ref statusCode, ref timestamp);
         m_value._ChildPath_ = (_ChildDataType_)Write(value);
         UpdateParent(context, ref statusCode, ref timestamp);
     }
