@@ -2925,6 +2925,14 @@ namespace ModelCompiler
 
                 AddTemplate(
                     template,
+                    "// ListOfEncodingMaskFields",
+                    null,
+                    children,
+                    new LoadTemplateEventHandler(LoadTemplate_ListOfEncodingMaskFields),
+                    null);
+
+                AddTemplate(
+                    template,
                     "// ListOfEncodedFields",
                     null,
                     children,
@@ -3618,6 +3626,32 @@ namespace ModelCompiler
             template.Write($"/// <remarks />");
             template.WriteNextLine(context.Prefix);
             template.Write($"{field.Name} = {index}{((index == dataType.Fields.Length) ? "" : ",")}");
+
+            return context.TemplatePath;
+        }
+        #endregion
+
+        #region "// ListOfEncodingMaskFields"
+        /// <summary>
+        /// Loads the template for a C# field declaration.
+        /// </summary>
+        private string LoadTemplate_ListOfEncodingMaskFields(Template template, Context context)
+        {
+            Parameter field = context.Target as Parameter;
+
+            if (field == null)
+            {
+                return null;
+            }
+
+            DataTypeDesign dataType = (DataTypeDesign)field.Parent;
+
+            int index = context.Index + 1;
+
+            template.WriteNextLine(context.Prefix);
+            template.Write($"/// <remarks />");
+            template.WriteNextLine(context.Prefix);
+            template.Write($"{field.Name} = 0x{1 << (index-1):X}{((index == dataType.Fields.Length) ? "" : ",")}");
 
             return context.TemplatePath;
         }

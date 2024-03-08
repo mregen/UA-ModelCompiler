@@ -11,7 +11,7 @@ namespace X {
 public enum _ClassName_Fields : uint
 {   
     None = 0,
-    // ListOfSwitchFields
+    // ListOfEncodingMaskFields
 }
     
 /// <remarks />
