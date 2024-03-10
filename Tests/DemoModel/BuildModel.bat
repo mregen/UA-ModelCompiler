@@ -1,11 +1,12 @@
 @ECHO off
 SETLOCAL
 
-set MODELCOMPILER=..\..\build\bin\Release\net6.0\Opc.Ua.ModelCompiler.exe
+set MODELCOMPILER=..\..\..\build\bin\Release\net8.0\Opc.Ua.ModelCompiler.exe
 set MODEL=DemoModel
 set VERSION=v105
 set EXCLUDE=Draft
 set INPUT=.
+set CSVINPUT=.
 set OUTPUT=.
 set USEALLOWSUBTYPES=-useAllowSubtypes
 
