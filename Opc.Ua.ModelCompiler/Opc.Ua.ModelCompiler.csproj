@@ -17,6 +17,11 @@
     <Configurations>Debug;Release;Docker</Configurations>
   </PropertyGroup>
 
+  <!-- set version manually in docker builds -->
+  <PropertyGroup Condition="'$(Dockerbuild)' == 'true'">
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+  </PropertyGroup>
+
   <!-- Package for dotnet tool build -->
   <PropertyGroup>
     <PackageId>OPCFoundation.Opc.Ua.ModelCompiler</PackageId>
@@ -519,6 +524,10 @@
     <PackageReference Include="CsvHelper" Version="30.0.1" />
     <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="4.0.2" />
     <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Core" Version="1.5.371.3-beta" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="build\" />
   </ItemGroup>
 
 </Project>
